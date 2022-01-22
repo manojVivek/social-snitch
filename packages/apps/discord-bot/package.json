@@ -1,0 +1,16 @@
+{
+  "name": "@socialsnitch/discord-bot",
+  "version": "0.0.0",
+  "description": "Package that implements the SocialSnitch Discord bot.",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "tsc-watch --onSuccess \"yarn run start\"",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "license": "MIT",
+  "private": true,
+  "dependencies": {
+    "eris": "^0.16.1"
+  }
+}
