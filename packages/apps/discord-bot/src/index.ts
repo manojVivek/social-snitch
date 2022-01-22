@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import Eris from 'eris';
-const Constants = Eris.Constants;
 
-const bot = Eris(process.env.BOT_TOKEN);
+const Constants = Eris.Constants;
+const bot = Eris(process.env.DISCORD_BOT_TOKEN);
 
 const registerCommands = (bot: Eris.Client) => {
   return bot.createCommand({
@@ -64,7 +64,7 @@ bot.on('interactionCreate', interaction => {
         ).value;
         switch (operation) {
           case 'subscribe':
-            return interaction.createMessage('Subscribe successful ✅');
+            return interaction.createMessage('Subscription successful ✅');
           case 'unsubscribe':
             return interaction.createMessage('Unsubscribe successful ✅');
           default:

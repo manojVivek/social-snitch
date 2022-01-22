@@ -1,0 +1,13 @@
+{
+  "name": "@socialsnitch/database",
+  "version": "0.0.0",
+  "description": "Package with implementation for accessing the DB.",
+  "main": "index.js",
+  "scripts": {
+    "update-types": "npx openapi-typescript https://tfqurhmowcbvqbvmzjzo.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQyNzMyNDA0LCJleHAiOjE5NTgzMDg0MDR9.SOr3n2WHiwy7-QBhq3tc6WPvujtTRDNbxapjATYLvh8 --output src/types.ts"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@supabase/supabase-js": "^1.29.3"
+  }
+}
