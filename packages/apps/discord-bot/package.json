@@ -11,6 +11,7 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
+    "dotenv": "^14.2.0",
     "eris": "^0.16.1"
   }
 }

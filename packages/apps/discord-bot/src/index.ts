@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import Eris from 'eris';
 const Constants = Eris.Constants;
 
