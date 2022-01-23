@@ -5,6 +5,9 @@ export const getAllDiscordSubscriptions = async () => {
   const {data, error} = await client
     .from<definitions['discord_subscriptions']>('discord_subscriptions')
     .select();
-  console.log('data', data);
+  if (error) {
+    console.error(error);
+    throw error;
+  }
   return data;
 };

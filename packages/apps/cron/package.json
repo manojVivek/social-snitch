@@ -1,0 +1,19 @@
+{
+  "name": "@socialsnitch/cron",
+  "version": "0.0.0",
+  "description": "Package that takes care of the cron workload.",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "ts-node-dev src/index.ts",
+    "prod": "ts-node src/index.ts"
+  },
+  "dependencies": {
+    "@socialsnitch/database": "0.0.0",
+    "@socialsnitch/discord-client": "0.0.0",
+    "bluebird": "^3.7.2",
+    "dotenv": "^14.2.0",
+    "isomorphic-fetch": "^3.0.0"
+  },
+  "license": "MIT",
+  "private": true
+}
