@@ -1,0 +1,10 @@
+{
+  "name": "@socialsnitch/discord-client",
+  "version": "0.0.0",
+  "description": "Package that has common discord bot functionalities.",
+  "main": "src/index.ts",
+  "dependencies": {
+    "eris": "^0.16.1"
+  },
+  "license": "MIT"
+}
