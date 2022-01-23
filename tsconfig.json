@@ -5,6 +5,12 @@
     "target": "es6",
     "moduleResolution": "node",
     "sourceMap": true,
+    "paths": {
+      "@socialsnitch/*": [
+        "./packages/shared/*",
+      ]
+    },
+    "rootDir": "."
   },
   "lib": [
     "es2015"

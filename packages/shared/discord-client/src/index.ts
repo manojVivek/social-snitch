@@ -9,7 +9,6 @@ class SocialSnitchDiscordClient extends _Eris.Client {
       if (interaction instanceof _Eris.CommandInteraction) {
         switch (interaction.data.name) {
           case 'socialsnitch':
-            console.log('interaction', interaction.channel.id, interaction.data);
             const operation = (
               interaction.data.options.find(
                 o => o.name === 'operation'
