@@ -63,6 +63,10 @@ class SocialSnitchDiscordClient extends _Eris.Client {
       ],
     });
   };
+
+  sendMessageToChannel = (channelId: string, message: string) => {
+    return this.createMessage(channelId, message);
+  };
 }
 
 export default SocialSnitchDiscordClient;

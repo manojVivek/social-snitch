@@ -12,6 +12,108 @@ export interface paths {
       };
     };
   };
+  "/discord_message_queue": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.discord_message_queue.id"];
+          created_at?: parameters["rowFilter.discord_message_queue.created_at"];
+          updated_at?: parameters["rowFilter.discord_message_queue.updated_at"];
+          message?: parameters["rowFilter.discord_message_queue.message"];
+          channel_id?: parameters["rowFilter.discord_message_queue.channel_id"];
+          status?: parameters["rowFilter.discord_message_queue.status"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["discord_message_queue"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** discord_message_queue */
+          discord_message_queue?: definitions["discord_message_queue"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.discord_message_queue.id"];
+          created_at?: parameters["rowFilter.discord_message_queue.created_at"];
+          updated_at?: parameters["rowFilter.discord_message_queue.updated_at"];
+          message?: parameters["rowFilter.discord_message_queue.message"];
+          channel_id?: parameters["rowFilter.discord_message_queue.channel_id"];
+          status?: parameters["rowFilter.discord_message_queue.status"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.discord_message_queue.id"];
+          created_at?: parameters["rowFilter.discord_message_queue.created_at"];
+          updated_at?: parameters["rowFilter.discord_message_queue.updated_at"];
+          message?: parameters["rowFilter.discord_message_queue.message"];
+          channel_id?: parameters["rowFilter.discord_message_queue.channel_id"];
+          status?: parameters["rowFilter.discord_message_queue.status"];
+        };
+        body: {
+          /** discord_message_queue */
+          discord_message_queue?: definitions["discord_message_queue"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/discord_subscriptions": {
     get: {
       parameters: {
@@ -216,6 +318,30 @@ export interface paths {
 }
 
 export interface definitions {
+  discord_message_queue: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    updated_at?: string;
+    /** Format: character varying */
+    message?: string;
+    /** Format: character varying */
+    channel_id?: string;
+    /** Format: character varying */
+    status?: string;
+  };
   discord_subscriptions: {
     /**
      * Format: bigint
@@ -294,6 +420,20 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
+  /** @description discord_message_queue */
+  "body.discord_message_queue": definitions["discord_message_queue"];
+  /** Format: bigint */
+  "rowFilter.discord_message_queue.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.discord_message_queue.created_at": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.discord_message_queue.updated_at": string;
+  /** Format: character varying */
+  "rowFilter.discord_message_queue.message": string;
+  /** Format: character varying */
+  "rowFilter.discord_message_queue.channel_id": string;
+  /** Format: character varying */
+  "rowFilter.discord_message_queue.status": string;
   /** @description discord_subscriptions */
   "body.discord_subscriptions": definitions["discord_subscriptions"];
   /** Format: bigint */

@@ -20,5 +20,5 @@ export const searchHackerNews = async (keywords, after) => {
     const newItems = await findNewItems(keyword, after);
     newItems.forEach(item => results.add(item));
   });
-  return results;
+  return Array.from(results);
 };
