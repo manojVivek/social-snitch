@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import DiscordClient from '@socialsnitch/discord-client';
+import {startMessageTransmitter} from './message-transmitter';
 
 const bot = new DiscordClient(process.env.DISCORD_BOT_TOKEN);
 
@@ -7,6 +8,7 @@ bot.on('ready', async () => {
   console.log('Ready!');
   try {
     await bot.registerSlashCommands();
+    startMessageTransmitter(bot);
   } catch (err) {
     console.log('Error', err);
   }
