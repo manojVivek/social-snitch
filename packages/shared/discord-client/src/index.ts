@@ -23,8 +23,11 @@ class SocialSnitchDiscordClient extends _Eris.Client {
                   options,
                 });
               case 'unsubscribe':
-                this.emit('unsubscribe', interaction);
-                return interaction.createMessage('Unsubscribe successful ✅');
+                return this.emit('unsubscribe', {
+                  interaction,
+                  channel_id,
+                  options,
+                });
               default:
                 return interaction.createMessage(`Unknown operation: ${options.operation}`);
             }

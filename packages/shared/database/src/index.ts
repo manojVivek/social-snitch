@@ -60,12 +60,43 @@ export const addDiscordSubscription = async (channel_id: string, newKeywords: st
         channel_id,
         keyword: newKeywords,
       });
-    } else {
-      console.log('Appending keywords to existing channel subscription');
-      updatedData = await appendKeywordToSubscription(existingData, newKeywords);
     }
+    console.log('Appending keywords to existing channel subscription');
+    updatedData = await appendKeywordToSubscription(existingData, newKeywords);
   } while (!updatedData);
   return updatedData;
+};
+
+const removeKeywordsFromSubscription = async (prevData, keywordsToRm) => {
+  const {data, error} = await client
+    .from<definitions['discord_subscriptions']>('discord_subscriptions')
+    .update({
+      keyword: toPostgresArrayLiteral(
+        prevData.keyword.filter(keyword => !keywordsToRm.includes(keyword))
+      ),
+      updated_at: 'now()',
+    })
+    .eq('id', prevData.id)
+    .eq('keyword', toPostgresArrayLiteral(prevData.keyword));
+  if (error) {
+    throw error;
+  }
+  return data[0];
+};
+
+export const removeDiscordSubscription = async (channel_id, keywordsToRm: string[]) => {
+  const existingData = await getEntity<definitions['discord_subscriptions']>(
+    'discord_subscriptions',
+    {
+      channel_id,
+    }
+  );
+  if (!existingData) {
+    console.log('No subscriptions found for the channel, so returning.');
+    return;
+  }
+  console.log('Removing keywords to from channel subscription');
+  return removeKeywordsFromSubscription(existingData, keywordsToRm);
 };
 
 export const updateDiscordSubscription = async (id, fields) => {

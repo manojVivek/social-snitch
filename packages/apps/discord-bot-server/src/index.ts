@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import DiscordClient from '@socialsnitch/discord-client';
 import {startMessageTransmitter} from './message-transmitter';
-import {addDiscordSubscription} from '@socialsnitch/database';
+import {addDiscordSubscription, removeDiscordSubscription} from '@socialsnitch/database';
 
 try {
   console.log('Starting...');
@@ -34,8 +34,17 @@ try {
     );
   });
 
-  bot.on('unsubscribe', async interaction => {
-    return interaction.createMessage('Unsubscribe successful ✅');
+  bot.on('unsubscribe', async ({channel_id, options, interaction}) => {
+    let success = false;
+    try {
+      await removeDiscordSubscription(channel_id, options.keywords);
+      success = true;
+    } catch (err) {
+      console.log('Error while unsubscribing', channel_id, options.keywords, err);
+    }
+    return interaction.createMessage(
+      success ? 'Unsubscribe successful ✅' : 'Request failed ❌. Please try again.'
+    );
   });
 
   console.log('Connecting...');
