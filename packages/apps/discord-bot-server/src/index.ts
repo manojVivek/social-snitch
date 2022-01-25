@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import DiscordClient from '@socialsnitch/discord-client';
 import {startMessageTransmitter} from './message-transmitter';
+import {addDiscordSubscription} from '@socialsnitch/database';
 
 try {
   console.log('Starting...');
@@ -20,8 +21,17 @@ try {
     console.error(err);
   });
 
-  bot.on('subscribe', async interaction => {
-    return interaction.createMessage('Subscription successful ✅');
+  bot.on('subscribe', async ({channel_id, options, interaction}) => {
+    let success = false;
+    try {
+      await addDiscordSubscription(channel_id, options.keywords);
+      success = true;
+    } catch (err) {
+      console.log('Error while subscribing', channel_id, options.keywords, err);
+    }
+    return interaction.createMessage(
+      success ? 'Subscription successful ✅' : 'Request failed ❌. Please try again.'
+    );
   });
 
   bot.on('unsubscribe', async interaction => {

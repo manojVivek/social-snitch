@@ -1,4 +1,5 @@
 import _Eris from 'eris';
+import {parseOptions} from './utils';
 
 const Constants = _Eris.Constants;
 
@@ -9,19 +10,23 @@ class SocialSnitchDiscordClient extends _Eris.Client {
       if (interaction instanceof _Eris.CommandInteraction) {
         switch (interaction.data.name) {
           case 'socialsnitch':
-            const operation = (
-              interaction.data.options.find(
-                o => o.name === 'operation'
-              ) as _Eris.InteractionDataOptionsWithValue
-            ).value;
-            switch (operation) {
+            const {
+              channel: {id: channel_id},
+              data: {options: optionsArray},
+            } = interaction;
+            const options = parseOptions(optionsArray);
+            switch (options.operation) {
               case 'subscribe':
-                return this.emit('subscribe', interaction);
+                return this.emit('subscribe', {
+                  interaction,
+                  channel_id,
+                  options,
+                });
               case 'unsubscribe':
                 this.emit('unsubscribe', interaction);
                 return interaction.createMessage('Unsubscribe successful ✅');
               default:
-                return interaction.createMessage(`Unknown operation: ${operation}`);
+                return interaction.createMessage(`Unknown operation: ${options.operation}`);
             }
           default: {
             return interaction.createMessage('Unknown command');
@@ -58,7 +63,7 @@ class SocialSnitchDiscordClient extends _Eris.Client {
           name: 'keywords',
           type: Constants.ApplicationCommandOptionTypes.STRING,
           required: true,
-          description: 'comma separated keywords to subscribe/unsubscribe',
+          description: `A '|' separated list of keywords to subscribe/unsubscribe`,
         },
       ],
     });
