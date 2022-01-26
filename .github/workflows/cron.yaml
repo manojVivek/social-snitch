@@ -1,0 +1,28 @@
+name: HNCron
+
+on:
+  schedule:
+    - cron: '*/5 * * * *''
+
+jobs:
+  discover-hn-mentions:
+    name: Discover-HN-Mentions
+    runs-on: ubuntu-latest
+    env:
+      DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: Install Node v16
+        uses: actions/setup-node@v2.5.1
+        with:
+          node-version: '16'
+
+      - name: Housekeeping
+        run: yarn && yarn bootstrap
+
+      - name: Run the script
+        run: yarn lerna run --scope @socialsnitch/cron prod
