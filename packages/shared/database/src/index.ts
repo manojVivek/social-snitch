@@ -29,6 +29,12 @@ const insertEntity = async <Type>(tableName: string, entity: Partial<Type>): Pro
   return data[0];
 };
 
+export const getSubscriptionByChannelId = async channelId => {
+  return getEntity<definitions['discord_subscriptions']>('discord_subscriptions', {
+    channel_id: channelId,
+  });
+};
+
 const appendKeywordToSubscription = async (prevData, newKeywords) => {
   const {data, error} = await client
     .from<definitions['discord_subscriptions']>('discord_subscriptions')

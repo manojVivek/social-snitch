@@ -8,29 +8,29 @@ class SocialSnitchDiscordClient extends _Eris.Client {
     super(token);
     this.on('interactionCreate', interaction => {
       if (interaction instanceof _Eris.CommandInteraction) {
+        const {
+          channel: {id: channel_id},
+          data: {options: optionsArray},
+        } = interaction;
+        const options = parseOptions(optionsArray);
         switch (interaction.data.name) {
-          case 'socialsnitch':
-            const {
-              channel: {id: channel_id},
-              data: {options: optionsArray},
-            } = interaction;
-            const options = parseOptions(optionsArray);
-            switch (options.operation) {
-              case 'subscribe':
-                return this.emit('subscribe', {
-                  interaction,
-                  channel_id,
-                  options,
-                });
-              case 'unsubscribe':
-                return this.emit('unsubscribe', {
-                  interaction,
-                  channel_id,
-                  options,
-                });
-              default:
-                return interaction.createMessage(`Unknown operation: ${options.operation}`);
-            }
+          case 'socialsnitch-subscribe':
+            return this.emit('subscribe', {
+              interaction,
+              channel_id,
+              options,
+            });
+          case 'socialsnitch-unsubscribe':
+            return this.emit('unsubscribe', {
+              interaction,
+              channel_id,
+              options,
+            });
+          case 'socialsnitch-list-subscriptions':
+            return this.emit('list-subscriptions', {
+              interaction,
+              channel_id,
+            });
           default: {
             return interaction.createMessage('Unknown command');
           }
@@ -39,37 +39,41 @@ class SocialSnitchDiscordClient extends _Eris.Client {
     });
   }
 
-  registerSlashCommands = () => {
-    return this.createCommand({
-      name: 'socialsnitch',
-      description: 'Manage alert subscriptions',
-      type: Constants.ApplicationCommandTypes.CHAT_INPUT,
-      options: [
-        {
-          name: 'operation',
-          type: Constants.ApplicationCommandOptionTypes.STRING,
-          required: true,
-          choices: [
-            {name: 'Subscribe', value: 'subscribe'},
-            {name: 'Unsubscribe', value: 'unsubscribe'},
-          ],
-          description: 'subscribe or unsubscribe for keywords',
-        },
-        {
-          name: 'platform',
-          type: Constants.ApplicationCommandOptionTypes.STRING,
-          required: true,
-          choices: [{name: 'HackerNews', value: 'hackernews'}],
-          description: 'Social media platform to keep tab of',
-        },
-        {
-          name: 'keywords',
-          type: Constants.ApplicationCommandOptionTypes.STRING,
-          required: true,
-          description: `A '|' separated list of keywords to subscribe/unsubscribe`,
-        },
-      ],
-    });
+  registerSlashCommands = async () => {
+    const commonOptions = [
+      {
+        name: 'platform',
+        type: Constants.ApplicationCommandOptionTypes.STRING,
+        required: true,
+        choices: [{name: 'HackerNews', value: 'hackernews'}],
+        description: 'Social media platform to keep tab of',
+      },
+      {
+        name: 'keywords',
+        type: Constants.ApplicationCommandOptionTypes.STRING,
+        required: true,
+        description: `A '|' separated list of keywords to subscribe/unsubscribe`,
+      },
+    ];
+    return Promise.all([
+      this.createCommand({
+        name: 'socialsnitch-subscribe',
+        description: 'Add keyword subscription to this channel.',
+        type: Constants.ApplicationCommandTypes.CHAT_INPUT,
+        options: commonOptions,
+      }),
+      this.createCommand({
+        name: 'socialsnitch-unsubscribe',
+        description: 'Remove keyword subscription from this channel.',
+        type: Constants.ApplicationCommandTypes.CHAT_INPUT,
+        options: commonOptions,
+      }),
+      this.createCommand({
+        name: 'socialsnitch-list-subscriptions',
+        description: 'List all current keyword subscriptions for this channel.',
+        type: Constants.ApplicationCommandTypes.CHAT_INPUT,
+      }),
+    ]);
   };
 
   sendMessageToChannel = (channelId: string, message: string) => {

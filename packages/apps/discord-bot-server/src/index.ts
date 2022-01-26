@@ -1,7 +1,11 @@
 import 'dotenv/config';
 import DiscordClient from '@socialsnitch/discord-client';
 import {startMessageTransmitter} from './message-transmitter';
-import {addDiscordSubscription, removeDiscordSubscription} from '@socialsnitch/database';
+import {
+  addDiscordSubscription,
+  getSubscriptionByChannelId,
+  removeDiscordSubscription,
+} from '@socialsnitch/database';
 
 try {
   console.log('Starting...');
@@ -45,6 +49,14 @@ try {
     return interaction.createMessage(
       success ? 'Unsubscribe successful ✅' : 'Request failed ❌. Please try again.'
     );
+  });
+
+  bot.on('list-subscriptions', async ({channel_id, interaction}) => {
+    const data = await getSubscriptionByChannelId(channel_id);
+    if (!data || data?.keyword?.length === 0) {
+      return interaction.createMessage('No active subscriptions found for this channel.');
+    }
+    return interaction.createMessage(`Active keyword subscriptions: \`${data.keyword.join('|')}\``);
   });
 
   console.log('Connecting...');

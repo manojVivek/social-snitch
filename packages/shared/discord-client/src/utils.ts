@@ -7,6 +7,9 @@ export type OptionsObject = {
 };
 
 export const parseOptions = (optionsArray: any[]): OptionsObject => {
+  if (!optionsArray) {
+    return null;
+  }
   return optionsArray.reduce((acc, curr) => {
     const data = curr as _Eris.InteractionDataOptionsWithValue;
     acc[data.name] = data.value;
