@@ -18,8 +18,9 @@ async function main() {
 
     if (results.length) {
       await addMessageToDiscordQueue(
-        `New HackerNews mentions:
-      ${results.map((result, idx) => `${idx + 1}. ${result}`).join('\n')}`,
+        `New HackerNews mentions:\n${results
+          .map((result, idx) => `${idx + 1}. ${result}`)
+          .join('\n')}`,
         channel_id
       );
     }

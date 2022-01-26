@@ -12,6 +12,93 @@ export const getAllDiscordSubscriptions = async () => {
   return data;
 };
 
+const getEntity = async <Type>(tableName: string, query: Record<string, string>): Promise<Type> => {
+  const {data, error} = await client.from<Type>(tableName).select().match(query).maybeSingle();
+  if (error) {
+    console.error(error);
+    throw error;
+  }
+  return data;
+};
+
+const insertEntity = async <Type>(tableName: string, entity: Partial<Type>): Promise<Type> => {
+  const {data, error} = await client.from<Type>(tableName).insert(entity);
+  if (error) {
+    throw error;
+  }
+  return data[0];
+};
+
+const appendKeywordToSubscription = async (prevData, newKeywords) => {
+  const {data, error} = await client
+    .from<definitions['discord_subscriptions']>('discord_subscriptions')
+    .update({
+      keyword: toPostgresArrayLiteral(Array.from(new Set([...prevData.keyword, ...newKeywords]))),
+      updated_at: 'now()',
+    })
+    .eq('id', prevData.id)
+    .eq('keyword', toPostgresArrayLiteral(prevData.keyword));
+  if (error) {
+    throw error;
+  }
+  return data[0];
+};
+
+export const addDiscordSubscription = async (channel_id: string, newKeywords: string[]) => {
+  console.log('Adding new subscription', channel_id, newKeywords);
+  let updatedData = null;
+  do {
+    let existingData = await getEntity<definitions['discord_subscriptions']>(
+      'discord_subscriptions',
+      {
+        channel_id,
+      }
+    );
+    if (!existingData) {
+      console.log('Inserting new channel subscription');
+      return insertEntity<definitions['discord_subscriptions']>('discord_subscriptions', {
+        channel_id,
+        keyword: newKeywords,
+      });
+    }
+    console.log('Appending keywords to existing channel subscription');
+    updatedData = await appendKeywordToSubscription(existingData, newKeywords);
+  } while (!updatedData);
+  return updatedData;
+};
+
+const removeKeywordsFromSubscription = async (prevData, keywordsToRm) => {
+  const {data, error} = await client
+    .from<definitions['discord_subscriptions']>('discord_subscriptions')
+    .update({
+      keyword: toPostgresArrayLiteral(
+        prevData.keyword.filter(keyword => !keywordsToRm.includes(keyword))
+      ),
+      updated_at: 'now()',
+    })
+    .eq('id', prevData.id)
+    .eq('keyword', toPostgresArrayLiteral(prevData.keyword));
+  if (error) {
+    throw error;
+  }
+  return data[0];
+};
+
+export const removeDiscordSubscription = async (channel_id, keywordsToRm: string[]) => {
+  const existingData = await getEntity<definitions['discord_subscriptions']>(
+    'discord_subscriptions',
+    {
+      channel_id,
+    }
+  );
+  if (!existingData) {
+    console.log('No subscriptions found for the channel, so returning.');
+    return;
+  }
+  console.log('Removing keywords to from channel subscription');
+  return removeKeywordsFromSubscription(existingData, keywordsToRm);
+};
+
 export const updateDiscordSubscription = async (id, fields) => {
   const {data, error} = await client
     .from<definitions['discord_subscriptions']>('discord_subscriptions')
@@ -94,4 +181,8 @@ export const setDiscordMessageTransmitted = async id => {
     throw error;
   }
   return data;
+};
+
+export const toPostgresArrayLiteral = (array: string[]): unknown[] => {
+  return `{${array.join(', ')}}` as unknown as unknown[];
 };
