@@ -2,7 +2,9 @@ name: HNCron
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
 
 jobs:
   discover-hn-mentions:
