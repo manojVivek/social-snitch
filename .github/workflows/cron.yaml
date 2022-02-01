@@ -27,4 +27,4 @@ jobs:
         run: yarn && yarn bootstrap
 
       - name: Run the script
-        run: yarn lerna run --scope @socialsnitch/cron prod
+        run: yarn lerna run --stream --scope @socialsnitch/cron prod
