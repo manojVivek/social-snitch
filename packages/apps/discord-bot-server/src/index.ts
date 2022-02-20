@@ -5,7 +5,7 @@ import {
   addDiscordSubscription,
   getSubscriptionByChannelId,
   removeDiscordSubscription,
-} from '@socialsnitch/database';
+} from '@socialsnitch/database/src/del';
 
 try {
   console.log('Starting...');

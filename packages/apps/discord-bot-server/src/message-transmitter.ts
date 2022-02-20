@@ -1,7 +1,7 @@
 import {
   getADiscordMessageFromQueueForTransmission,
   setDiscordMessageTransmitted,
-} from '@socialsnitch/database';
+} from '@socialsnitch/database/src/del';
 import SocialSnitchDiscordClient from '@socialsnitch/discord-client';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));

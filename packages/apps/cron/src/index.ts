@@ -1,30 +1,20 @@
+import {SOCIAL_PLATFORMS} from '@socialsnitch/database/src/constants';
+import {getAllWatchConfigs} from '@socialsnitch/database/src/watch_config';
 import 'dotenv/config';
-import {
-  addMessageToDiscordQueue,
-  getAllDiscordSubscriptions,
-  updateDiscordSubscription,
-} from '@socialsnitch/database';
 import {searchHackerNews} from './utils/hn-search';
 
-async function main() {
-  const subscription = await getAllDiscordSubscriptions();
-  for (const sub of subscription) {
-    const currentTime = new Date().toISOString();
-    const {keyword: keywords, last_run_at, channel_id} = sub;
-    const results = await searchHackerNews(
-      keywords,
-      Math.floor(new Date(last_run_at).getTime() / 1000)
-    );
+const searchers = {
+  [SOCIAL_PLATFORMS.HACKER_NEWS.id]: searchHackerNews,
+};
 
-    if (results.length) {
-      await addMessageToDiscordQueue(
-        `New HackerNews mentions:\n${results
-          .map((result, idx) => `${idx + 1}. ${result}`)
-          .join('\n')}`,
-        channel_id
-      );
-    }
-    await updateDiscordSubscription(sub.id, {last_run_at: currentTime});
+async function main() {
+  const watchConfigs = await getAllWatchConfigs();
+  for (const watchConfig of watchConfigs) {
+    console.log(watchConfig);
+    const {keyword, social_platform_id, last_run_at} = watchConfig;
+    const after = Math.floor(new Date(last_run_at).getTime() / 1000);
+    const results = await searchers[social_platform_id](keyword, after);
+    console.log(results);
   }
 }
 

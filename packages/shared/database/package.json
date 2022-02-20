@@ -4,7 +4,7 @@
   "description": "Package with implementation for accessing the DB.",
   "main": "src/index.ts",
   "scripts": {
-    "update-types": "npx openapi-typescript https://tfqurhmowcbvqbvmzjzo.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNjQyNzMyNDA0LCJleHAiOjE5NTgzMDg0MDR9.SOr3n2WHiwy7-QBhq3tc6WPvujtTRDNbxapjATYLvh8 --output src/types.ts"
+    "update-types": "npx openapi-typescript https://cvlmjneifxhmmuppoydh.supabase.co/rest/v1/?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoic2VydmljZV9yb2xlIiwiaWF0IjoxNjQzMzczODgxLCJleHAiOjE5NTg5NDk4ODF9.36mFVEkei5YM3RwqUMS9iLRtwMHavQXkKU4mYpglas0 --output src/types.ts"
   },
   "license": "MIT",
   "dependencies": {

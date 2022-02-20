@@ -1,5 +1,5 @@
-import client from './client';
-import {definitions} from './types';
+import client from '../client';
+import {definitions} from '../types';
 
 export const getAllDiscordSubscriptions = async () => {
   const {data, error} = await client

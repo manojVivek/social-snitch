@@ -1,5 +1,4 @@
 import fetch from 'isomorphic-fetch';
-import bluebird from 'bluebird';
 
 type Hits = {
   hits: Array<{
@@ -14,11 +13,7 @@ const findNewItems = async (keyword, after) => {
   return json.hits.map(item => `https://news.ycombinator.com/item?id=${item.objectID}`);
 };
 
-export const searchHackerNews = async (keywords, after) => {
-  const results = new Set();
-  await bluebird.each(keywords, async keyword => {
-    const newItems = await findNewItems(keyword, after);
-    newItems.forEach(item => results.add(item));
-  });
-  return Array.from(results);
+export const searchHackerNews = async (keyword, after) => {
+  const newItems = await findNewItems(keyword, after);
+  return newItems;
 };
