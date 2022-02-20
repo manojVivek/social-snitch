@@ -6,18 +6,14 @@ export const ensureNotificationConfigExists = async (
   notification_platform_id: number,
   config: any
 ) => {
-  let notificationConfig = await getNotificationConfig({
+  return client.ensureEntityExists<definitions['notification_config']>('notification_config', {
     user_id,
     notification_platform_id,
     config: JSON.stringify(config),
   });
-  if (!notificationConfig) {
-    notificationConfig = await createNotificationConfig(user_id, notification_platform_id, config);
-  }
-  return notificationConfig;
 };
 
-const createNotificationConfig = async (
+export const createNotificationConfig = async (
   user_id: number,
   notification_platform_id: number,
   config: any

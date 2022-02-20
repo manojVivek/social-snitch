@@ -4,6 +4,7 @@ interface SSSupabaseClient extends SupabaseClient {
   getEntity: <T>(entityName: string, query: {[key: string]: any}) => Promise<T>;
   insertEntity: <T>(entityName: string, entity: Partial<T>) => Promise<T>;
   getAllEntities: <T>(entityName: string, query: {[key: string]: any}) => Promise<T[]>;
+  ensureEntityExists: <T>(entityName: string, query: Partial<T>) => Promise<T>;
 }
 
 const getSSSupabaseClient: (client: SupabaseClient) => SSSupabaseClient = client => {
@@ -33,6 +34,17 @@ const getSSSupabaseClient: (client: SupabaseClient) => SSSupabaseClient = client
       throw error;
     }
     return data[0];
+  };
+
+  ssClient.ensureEntityExists = async <Type>(
+    tableName: string,
+    entity: Partial<Type>
+  ): Promise<Type> => {
+    const data = await ssClient.getEntity<Type>(tableName, entity);
+    if (data) {
+      return data;
+    }
+    return ssClient.insertEntity<Type>(tableName, entity);
   };
 
   return ssClient;

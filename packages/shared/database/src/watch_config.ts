@@ -3,11 +3,10 @@ import {ISocialPlatform} from './constants';
 import {definitions} from './types';
 
 export const ensureWatchConfigExist = async (platform: ISocialPlatform, keyword: string) => {
-  let watchConfig = await getWatchConfig(platform, keyword);
-  if (!watchConfig) {
-    watchConfig = await createWatchConfig(platform, keyword);
-  }
-  return watchConfig;
+  return client.ensureEntityExists<definitions['watch_config']>('watch_config', {
+    keyword,
+    social_platform_id: platform.id,
+  });
 };
 
 export const createWatchConfig = async (platform: ISocialPlatform, keyword: string) => {

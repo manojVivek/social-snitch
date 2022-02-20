@@ -217,7 +217,7 @@ export interface paths {
           id?: parameters["rowFilter.notifications.id"];
           created_at?: parameters["rowFilter.notifications.created_at"];
           updated_at?: parameters["rowFilter.notifications.updated_at"];
-          subscription_id?: parameters["rowFilter.notifications.subscription_id"];
+          subscription_config_id?: parameters["rowFilter.notifications.subscription_config_id"];
           content?: parameters["rowFilter.notifications.content"];
           status?: parameters["rowFilter.notifications.status"];
           /** Filtering Columns */
@@ -273,7 +273,7 @@ export interface paths {
           id?: parameters["rowFilter.notifications.id"];
           created_at?: parameters["rowFilter.notifications.created_at"];
           updated_at?: parameters["rowFilter.notifications.updated_at"];
-          subscription_id?: parameters["rowFilter.notifications.subscription_id"];
+          subscription_config_id?: parameters["rowFilter.notifications.subscription_config_id"];
           content?: parameters["rowFilter.notifications.content"];
           status?: parameters["rowFilter.notifications.status"];
         };
@@ -293,7 +293,7 @@ export interface paths {
           id?: parameters["rowFilter.notifications.id"];
           created_at?: parameters["rowFilter.notifications.created_at"];
           updated_at?: parameters["rowFilter.notifications.updated_at"];
-          subscription_id?: parameters["rowFilter.notifications.subscription_id"];
+          subscription_config_id?: parameters["rowFilter.notifications.subscription_config_id"];
           content?: parameters["rowFilter.notifications.content"];
           status?: parameters["rowFilter.notifications.status"];
         };
@@ -513,6 +513,8 @@ export interface paths {
           updated_at?: parameters["rowFilter.subscription_config.updated_at"];
           subscription_id?: parameters["rowFilter.subscription_config.subscription_id"];
           watch_config_id?: parameters["rowFilter.subscription_config.watch_config_id"];
+          /** Reference to the notification config */
+          notification_config_id?: parameters["rowFilter.subscription_config.notification_config_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -568,6 +570,8 @@ export interface paths {
           updated_at?: parameters["rowFilter.subscription_config.updated_at"];
           subscription_id?: parameters["rowFilter.subscription_config.subscription_id"];
           watch_config_id?: parameters["rowFilter.subscription_config.watch_config_id"];
+          /** Reference to the notification config */
+          notification_config_id?: parameters["rowFilter.subscription_config.notification_config_id"];
         };
         header: {
           /** Preference */
@@ -587,6 +591,8 @@ export interface paths {
           updated_at?: parameters["rowFilter.subscription_config.updated_at"];
           subscription_id?: parameters["rowFilter.subscription_config.subscription_id"];
           watch_config_id?: parameters["rowFilter.subscription_config.watch_config_id"];
+          /** Reference to the notification config */
+          notification_config_id?: parameters["rowFilter.subscription_config.notification_config_id"];
         };
         body: {
           /** subscription_config */
@@ -834,7 +840,7 @@ export interface definitions {
      * This is a Foreign Key to `notification_platform.id`.<fk table='notification_platform' column='id'/>
      */
     notification_platform_id?: number;
-    /** Format: json */
+    /** Format: jsonb */
     config?: string;
   };
   notification_platform: {
@@ -878,9 +884,9 @@ export interface definitions {
     /**
      * Format: bigint
      * @description Note:
-     * This is a Foreign Key to `subscription.id`.<fk table='subscription' column='id'/>
+     * This is a Foreign Key to `subscription_config.id`.<fk table='subscription_config' column='id'/>
      */
-    subscription_id?: number;
+    subscription_config_id?: number;
     /** Format: character varying */
     content?: string;
     /** Format: character varying */
@@ -956,8 +962,20 @@ export interface definitions {
      * This is a Foreign Key to `subscription.id`.<fk table='subscription' column='id'/>
      */
     subscription_id?: number;
-    /** Format: bigint */
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `watch_config.id`.<fk table='watch_config' column='id'/>
+     */
     watch_config_id?: number;
+    /**
+     * Format: bigint
+     * @description Reference to the notification config
+     *
+     * Note:
+     * This is a Foreign Key to `notification_config.id`.<fk table='notification_config' column='id'/>
+     */
+    notification_config_id?: number;
   };
   /** @description User accounts */
   user: {
@@ -1059,7 +1077,7 @@ export interface parameters {
   "rowFilter.notification_config.user_id": string;
   /** Format: bigint */
   "rowFilter.notification_config.notification_platform_id": string;
-  /** Format: json */
+  /** Format: jsonb */
   "rowFilter.notification_config.config": string;
   /** @description notification_platform */
   "body.notification_platform": definitions["notification_platform"];
@@ -1080,7 +1098,7 @@ export interface parameters {
   /** Format: timestamp with time zone */
   "rowFilter.notifications.updated_at": string;
   /** Format: bigint */
-  "rowFilter.notifications.subscription_id": string;
+  "rowFilter.notifications.subscription_config_id": string;
   /** Format: character varying */
   "rowFilter.notifications.content": string;
   /** Format: character varying */
@@ -1117,6 +1135,11 @@ export interface parameters {
   "rowFilter.subscription_config.subscription_id": string;
   /** Format: bigint */
   "rowFilter.subscription_config.watch_config_id": string;
+  /**
+   * Format: bigint
+   * @description Reference to the notification config
+   */
+  "rowFilter.subscription_config.notification_config_id": string;
   /** @description user */
   "body.user": definitions["user"];
   /** Format: bigint */
