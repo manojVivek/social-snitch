@@ -3,7 +3,12 @@ import {createClient, SupabaseClient} from '@supabase/supabase-js';
 interface SSSupabaseClient extends SupabaseClient {
   getEntity: <T>(entityName: string, query: {[key: string]: any}) => Promise<T>;
   insertEntity: <T>(entityName: string, entity: Partial<T>) => Promise<T>;
-  getAllEntities: <T>(entityName: string, query: {[key: string]: any}) => Promise<T[]>;
+  getEntities: <T>(entityName: string, query: {[key: string]: any}) => Promise<T[]>;
+  updateEntities: <T>(
+    entityName: string,
+    query: Record<string, string>,
+    entity: Partial<T>
+  ) => Promise<T[]>;
   ensureEntityExists: <T>(entityName: string, query: Partial<T>) => Promise<T>;
 }
 
@@ -19,7 +24,7 @@ const getSSSupabaseClient: (client: SupabaseClient) => SSSupabaseClient = client
     return data;
   };
 
-  ssClient.getAllEntities = async <T>(tableName: string, query: Record<string, string> = {}) => {
+  ssClient.getEntities = async <T>(tableName: string, query: Record<string, string> = {}) => {
     const {data, error} = await client.from<T>(tableName).select().match(query);
     if (error) {
       console.error(error);
@@ -34,6 +39,18 @@ const getSSSupabaseClient: (client: SupabaseClient) => SSSupabaseClient = client
       throw error;
     }
     return data[0];
+  };
+
+  ssClient.updateEntities = async <Type>(
+    tableName: string,
+    query: Record<string, string>,
+    entity: Partial<Type>
+  ) => {
+    const {data, error} = await client.from<Type>(tableName).update(entity).match(query);
+    if (error) {
+      throw error;
+    }
+    return data;
   };
 
   ssClient.ensureEntityExists = async <Type>(

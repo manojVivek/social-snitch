@@ -24,5 +24,14 @@ export const getWatchConfig = async (platform: ISocialPlatform, keyword: string)
 };
 
 export const getAllWatchConfigs = async () => {
-  return client.getAllEntities<definitions['watch_config']>('watch_config', {});
+  return client.getEntities<definitions['watch_config']>('watch_config', {});
+};
+
+export const updateWatchConfig = async (id, watch_config: Partial<definitions['watch_config']>) => {
+  const data = await client.updateEntities<definitions['watch_config']>(
+    'watch_config',
+    {id},
+    watch_config
+  );
+  return data[0];
 };

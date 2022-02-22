@@ -25,3 +25,9 @@ export const NOTIFICATION_PLATFORMS: {[key: string]: INotificationPlatform} = {
     name: 'Discord',
   },
 };
+
+export const NOTIFICATION_STATUS = {
+  NEW: 'NEW',
+};
+
+export type INotificationStatus = typeof NOTIFICATION_STATUS[keyof typeof NOTIFICATION_STATUS];

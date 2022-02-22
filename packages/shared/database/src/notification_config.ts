@@ -28,3 +28,7 @@ export const createNotificationConfig = async (
 export const getNotificationConfig = async (query: Partial<definitions['notification_config']>) => {
   return client.getEntity<definitions['notification_config']>('notification_config', query);
 };
+
+export const getNotificationConfigById = async (id: number) => {
+  return getNotificationConfig({id});
+};

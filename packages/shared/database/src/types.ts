@@ -12,6 +12,108 @@ export interface paths {
       };
     };
   };
+  "/notification": {
+    get: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.notification.id"];
+          created_at?: parameters["rowFilter.notification.created_at"];
+          updated_at?: parameters["rowFilter.notification.updated_at"];
+          subscription_config_id?: parameters["rowFilter.notification.subscription_config_id"];
+          content?: parameters["rowFilter.notification.content"];
+          status?: parameters["rowFilter.notification.status"];
+          /** Filtering Columns */
+          select?: parameters["select"];
+          /** Ordering */
+          order?: parameters["order"];
+          /** Limiting and Pagination */
+          offset?: parameters["offset"];
+          /** Limiting and Pagination */
+          limit?: parameters["limit"];
+        };
+        header: {
+          /** Limiting and Pagination */
+          Range?: parameters["range"];
+          /** Limiting and Pagination */
+          "Range-Unit"?: parameters["rangeUnit"];
+          /** Preference */
+          Prefer?: parameters["preferCount"];
+        };
+      };
+      responses: {
+        /** OK */
+        200: {
+          schema: definitions["notification"][];
+        };
+        /** Partial Content */
+        206: unknown;
+      };
+    };
+    post: {
+      parameters: {
+        body: {
+          /** notification */
+          notification?: definitions["notification"];
+        };
+        query: {
+          /** Filtering Columns */
+          select?: parameters["select"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** Created */
+        201: unknown;
+      };
+    };
+    delete: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.notification.id"];
+          created_at?: parameters["rowFilter.notification.created_at"];
+          updated_at?: parameters["rowFilter.notification.updated_at"];
+          subscription_config_id?: parameters["rowFilter.notification.subscription_config_id"];
+          content?: parameters["rowFilter.notification.content"];
+          status?: parameters["rowFilter.notification.status"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+    patch: {
+      parameters: {
+        query: {
+          id?: parameters["rowFilter.notification.id"];
+          created_at?: parameters["rowFilter.notification.created_at"];
+          updated_at?: parameters["rowFilter.notification.updated_at"];
+          subscription_config_id?: parameters["rowFilter.notification.subscription_config_id"];
+          content?: parameters["rowFilter.notification.content"];
+          status?: parameters["rowFilter.notification.status"];
+        };
+        body: {
+          /** notification */
+          notification?: definitions["notification"];
+        };
+        header: {
+          /** Preference */
+          Prefer?: parameters["preferReturn"];
+        };
+      };
+      responses: {
+        /** No Content */
+        204: never;
+      };
+    };
+  };
   "/notification_config": {
     get: {
       parameters: {
@@ -198,108 +300,6 @@ export interface paths {
         body: {
           /** notification_platform */
           notification_platform?: definitions["notification_platform"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-  };
-  "/notifications": {
-    get: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.notifications.id"];
-          created_at?: parameters["rowFilter.notifications.created_at"];
-          updated_at?: parameters["rowFilter.notifications.updated_at"];
-          subscription_config_id?: parameters["rowFilter.notifications.subscription_config_id"];
-          content?: parameters["rowFilter.notifications.content"];
-          status?: parameters["rowFilter.notifications.status"];
-          /** Filtering Columns */
-          select?: parameters["select"];
-          /** Ordering */
-          order?: parameters["order"];
-          /** Limiting and Pagination */
-          offset?: parameters["offset"];
-          /** Limiting and Pagination */
-          limit?: parameters["limit"];
-        };
-        header: {
-          /** Limiting and Pagination */
-          Range?: parameters["range"];
-          /** Limiting and Pagination */
-          "Range-Unit"?: parameters["rangeUnit"];
-          /** Preference */
-          Prefer?: parameters["preferCount"];
-        };
-      };
-      responses: {
-        /** OK */
-        200: {
-          schema: definitions["notifications"][];
-        };
-        /** Partial Content */
-        206: unknown;
-      };
-    };
-    post: {
-      parameters: {
-        body: {
-          /** notifications */
-          notifications?: definitions["notifications"];
-        };
-        query: {
-          /** Filtering Columns */
-          select?: parameters["select"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** Created */
-        201: unknown;
-      };
-    };
-    delete: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.notifications.id"];
-          created_at?: parameters["rowFilter.notifications.created_at"];
-          updated_at?: parameters["rowFilter.notifications.updated_at"];
-          subscription_config_id?: parameters["rowFilter.notifications.subscription_config_id"];
-          content?: parameters["rowFilter.notifications.content"];
-          status?: parameters["rowFilter.notifications.status"];
-        };
-        header: {
-          /** Preference */
-          Prefer?: parameters["preferReturn"];
-        };
-      };
-      responses: {
-        /** No Content */
-        204: never;
-      };
-    };
-    patch: {
-      parameters: {
-        query: {
-          id?: parameters["rowFilter.notifications.id"];
-          created_at?: parameters["rowFilter.notifications.created_at"];
-          updated_at?: parameters["rowFilter.notifications.updated_at"];
-          subscription_config_id?: parameters["rowFilter.notifications.subscription_config_id"];
-          content?: parameters["rowFilter.notifications.content"];
-          status?: parameters["rowFilter.notifications.status"];
-        };
-        body: {
-          /** notifications */
-          notifications?: definitions["notifications"];
         };
         header: {
           /** Preference */
@@ -810,6 +810,35 @@ export interface paths {
 }
 
 export interface definitions {
+  /** @description Notifications for the subscriptions */
+  notification: {
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Primary Key.<pk/>
+     */
+    id: number;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    created_at?: string;
+    /**
+     * Format: timestamp with time zone
+     * @default now()
+     */
+    updated_at?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `subscription_config.id`.<fk table='subscription_config' column='id'/>
+     */
+    subscription_config_id?: number;
+    /** Format: character varying */
+    content?: string;
+    /** Format: character varying */
+    status?: string;
+  };
   /** @description Details of various notification for a user */
   notification_config: {
     /**
@@ -862,35 +891,6 @@ export interface definitions {
     updated_at?: string;
     /** Format: character varying */
     name?: string;
-  };
-  /** @description Notifications for the subscriptions */
-  notifications: {
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Primary Key.<pk/>
-     */
-    id: number;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    created_at?: string;
-    /**
-     * Format: timestamp with time zone
-     * @default now()
-     */
-    updated_at?: string;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `subscription_config.id`.<fk table='subscription_config' column='id'/>
-     */
-    subscription_config_id?: number;
-    /** Format: character varying */
-    content?: string;
-    /** Format: character varying */
-    status?: string;
   };
   /** @description Available Social Media platforms */
   social_platform: {
@@ -1065,6 +1065,20 @@ export interface parameters {
   offset: string;
   /** @description Limiting and Pagination */
   limit: string;
+  /** @description notification */
+  "body.notification": definitions["notification"];
+  /** Format: bigint */
+  "rowFilter.notification.id": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.notification.created_at": string;
+  /** Format: timestamp with time zone */
+  "rowFilter.notification.updated_at": string;
+  /** Format: bigint */
+  "rowFilter.notification.subscription_config_id": string;
+  /** Format: character varying */
+  "rowFilter.notification.content": string;
+  /** Format: character varying */
+  "rowFilter.notification.status": string;
   /** @description notification_config */
   "body.notification_config": definitions["notification_config"];
   /** Format: bigint */
@@ -1089,20 +1103,6 @@ export interface parameters {
   "rowFilter.notification_platform.updated_at": string;
   /** Format: character varying */
   "rowFilter.notification_platform.name": string;
-  /** @description notifications */
-  "body.notifications": definitions["notifications"];
-  /** Format: bigint */
-  "rowFilter.notifications.id": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.notifications.created_at": string;
-  /** Format: timestamp with time zone */
-  "rowFilter.notifications.updated_at": string;
-  /** Format: bigint */
-  "rowFilter.notifications.subscription_config_id": string;
-  /** Format: character varying */
-  "rowFilter.notifications.content": string;
-  /** Format: character varying */
-  "rowFilter.notifications.status": string;
   /** @description social_platform */
   "body.social_platform": definitions["social_platform"];
   /** Format: bigint */
