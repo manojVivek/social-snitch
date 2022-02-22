@@ -26,3 +26,7 @@ export const getSubscriptionConfigs = async (
 export const getSubscriptionConfigsForWatchConfigId = async (watch_config_id: number) => {
   return getSubscriptionConfigs({watch_config_id});
 };
+
+export const getSubscriptionConfigById = async (id: number) => {
+  return getSubscriptionConfig({id});
+};

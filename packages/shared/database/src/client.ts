@@ -46,7 +46,10 @@ const getSSSupabaseClient: (client: SupabaseClient) => SSSupabaseClient = client
     query: Record<string, string>,
     entity: Partial<Type>
   ) => {
-    const {data, error} = await client.from<Type>(tableName).update(entity).match(query);
+    const {data, error} = await client
+      .from<Type>(tableName)
+      .update({...entity, updated_at: new Date().toISOString()})
+      .match(query);
     if (error) {
       throw error;
     }
