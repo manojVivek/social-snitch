@@ -10,6 +10,10 @@ Add SocialSnitch bot to your discord server using this [invite link](https://dis
 1. Add/Remove subscriptions to specific keywords to receive alerts in a channel.
 2. Supported Platforms: [HackerNews](https://news.ycombinator.com/news).
 
+### Database Schema
+<img src="assets/schema-diagram.png" alt="Database schema diagram">
+
+
 <br><br>
 ![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)
 
