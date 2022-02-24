@@ -42,10 +42,7 @@ class SocialSnitchDiscordClient extends _Eris.Client {
         name: 'platform',
         type: Constants.ApplicationCommandOptionTypes.STRING,
         required: true,
-        choices: [
-          {name: 'HackerNews', value: SOCIAL_PLATFORMS.HACKER_NEWS.toString()},
-          {name: 'Reddit', value: SOCIAL_PLATFORMS.REDDIT.toString()},
-        ],
+        choices: [{name: 'HackerNews', value: SOCIAL_PLATFORMS.HACKER_NEWS.toString()}],
         description: 'Social media platform to keep tab of',
       },
       {
