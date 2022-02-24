@@ -3,6 +3,7 @@ import {createClient, SupabaseClient} from '@supabase/supabase-js';
 interface SSSupabaseClient extends SupabaseClient {
   getEntity: <T>(entityName: string, query: {[key: string]: any}) => Promise<T>;
   insertEntity: <T>(entityName: string, entity: Partial<T>) => Promise<T>;
+  deleteEntities: <T>(entityName: string, query: {[key: string]: any}) => Promise<T[]>;
   getEntities: <T>(entityName: string, query: {[key: string]: any}) => Promise<T[]>;
   updateEntities: <T>(
     entityName: string,
@@ -39,6 +40,14 @@ const getSSSupabaseClient: (client: SupabaseClient) => SSSupabaseClient = client
       throw error;
     }
     return data[0];
+  };
+
+  ssClient.deleteEntities = async <Type>(tableName: string, query: Record<string, string>) => {
+    const {data, error} = await client.from<Type>(tableName).delete().match(query);
+    if (error) {
+      throw error;
+    }
+    return data;
   };
 
   ssClient.updateEntities = async <Type>(

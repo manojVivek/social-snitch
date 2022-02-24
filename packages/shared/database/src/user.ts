@@ -7,6 +7,10 @@ export const ensureUserExists = async username => {
   });
 };
 
-export const getUser = async (query: Partial<definitions['user']>) => {
+const getUser = async (query: Partial<definitions['user']>) => {
   return client.getEntity<definitions['user']>('user', query);
+};
+
+export const getUserByUsername = async username => {
+  return getUser({username});
 };

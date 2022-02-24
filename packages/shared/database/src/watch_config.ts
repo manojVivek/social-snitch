@@ -16,7 +16,10 @@ export const createWatchConfig = async (platform: ISocialPlatform, keyword: stri
   });
 };
 
-export const getWatchConfig = async (platform: ISocialPlatform, keyword: string) => {
+export const getWatchConfigBySocialPlatformAndKeyword = async (
+  platform: ISocialPlatform,
+  keyword: string
+) => {
   return client.getEntity<definitions['watch_config']>('watch_config', {
     keyword,
     social_platform_id: platform.id,
@@ -34,4 +37,20 @@ export const updateWatchConfig = async (id, watch_config: Partial<definitions['w
     watch_config
   );
   return data[0];
+};
+
+export const deleteWatchConfig = async (id: number) => {
+  const data = await client.deleteEntities<definitions['watch_config']>('watch_config', {id});
+  return data;
+};
+
+export const getWatchConfigsByIds = async (ids: number[]) => {
+  const {data, error} = await client
+    .from<definitions['watch_config']>('watch_config')
+    .select()
+    .in('id' as any, ids);
+  if (error) {
+    throw error;
+  }
+  return data;
 };

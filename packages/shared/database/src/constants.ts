@@ -1,6 +1,7 @@
 export interface ISocialPlatform {
   id: number;
   name: string;
+  key: string;
 }
 
 export interface INotificationPlatform {
@@ -12,12 +13,22 @@ export const SOCIAL_PLATFORMS: {[key: string]: ISocialPlatform} = {
   HACKER_NEWS: {
     id: 1,
     name: 'HackerNews',
+    key: 'HACKER_NEWS',
   },
   REDDIT: {
     id: 2,
     name: 'Reddit',
+    key: 'REDDIT',
   },
 };
+
+export const SOCIAL_PLATFORMS_BY_ID: {[key: number]: ISocialPlatform} = Object.keys(
+  SOCIAL_PLATFORMS
+).reduce((acc, item) => {
+  const platform = SOCIAL_PLATFORMS[item];
+  acc[platform.id] = platform;
+  return acc;
+}, {});
 
 export const NOTIFICATION_PLATFORMS: {[key: string]: INotificationPlatform} = {
   DISCORD: {

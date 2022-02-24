@@ -1,11 +1,11 @@
 import 'dotenv/config';
-import DiscordClient from '@socialsnitch/discord-client';
-import {startMessageTransmitter} from './message-transmitter';
+import DiscordClient, {EventPayload} from '@socialsnitch/discord-client';
+import {startMessageTransmitter} from './message-transmitter-new';
 import {
-  addDiscordSubscription,
-  getSubscriptionByChannelId,
-  removeDiscordSubscription,
-} from '@socialsnitch/database/src/del';
+  createSubscription,
+  getSubscriptionDataByUsername,
+  removeSubscription,
+} from '@socialsnitch/database/src/subscription';
 
 try {
   console.log('Starting...');
@@ -25,10 +25,14 @@ try {
     console.error(err);
   });
 
-  bot.on('subscribe', async ({channel_id, options, interaction}) => {
+  bot.on('subscribe', async ({channel_id, options, interaction}: EventPayload) => {
     let success = false;
     try {
-      await addDiscordSubscription(channel_id, options.keywords);
+      await createSubscription(
+        `discord:${channel_id}`,
+        {[options.platform]: options.keywords},
+        {channelId: channel_id}
+      );
       success = true;
     } catch (err) {
       console.log('Error while subscribing', channel_id, options.keywords, err);
@@ -38,10 +42,10 @@ try {
     );
   });
 
-  bot.on('unsubscribe', async ({channel_id, options, interaction}) => {
+  bot.on('unsubscribe', async ({channel_id, options, interaction}: EventPayload) => {
     let success = false;
     try {
-      await removeDiscordSubscription(channel_id, options.keywords);
+      await removeSubscription(`discord:${channel_id}`, {[options.platform]: options.keywords});
       success = true;
     } catch (err) {
       console.log('Error while unsubscribing', channel_id, options.keywords, err);
@@ -52,11 +56,16 @@ try {
   });
 
   bot.on('list-subscriptions', async ({channel_id, interaction}) => {
-    const data = await getSubscriptionByChannelId(channel_id);
+    const data = await getSubscriptionDataByUsername(`discord:${channel_id}`);
     if (!data || data?.keyword?.length === 0) {
       return interaction.createMessage('No active subscriptions found for this channel.');
     }
-    return interaction.createMessage(`Active keyword subscriptions: \`${data.keyword.join('|')}\``);
+    const platformWiseKeywordsString = Object.keys(data.keyword)
+      .map((platform, idx) => `${idx + 1}. ${platform}: ${data.keyword[platform].join('|')}`)
+      .join('\n');
+    return interaction.createMessage(
+      `Active keyword subscriptions:\n${platformWiseKeywordsString}`
+    );
   });
 
   console.log('Connecting...');
