@@ -79,7 +79,7 @@ const getSSSupabaseClient: (client: SupabaseClient) => SSSupabaseClient = client
   return ssClient;
 };
 
-const client = createClient(process.env.SUPABASE_URL_V2, process.env.SUPABASE_ANON_KEY_V2);
+const client = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_ANON_KEY);
 
 const ssClient = getSSSupabaseClient(client);
 
