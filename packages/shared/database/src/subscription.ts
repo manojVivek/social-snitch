@@ -25,7 +25,7 @@ export const createSubscription = async (
   subscriptions: ICreateSubscriptionOptionsSubscriptions,
   nofiticationConfig: ICreateSubscriptionOptionsNotificationConfig
 ) => {
-  console.log('Creating Subscription for user:', username);
+  console.log('Creating Subscription for user:', username, subscriptions);
   const user = await ensureUserExists(username);
   console.log('Ensuring user exists ...Done');
   const user_id = user.id;
@@ -46,6 +46,7 @@ export const createSubscription = async (
     console.log('Creating Subscription ...Done');
   }
   await Bluebird.map(Object.entries(subscriptions), async ([platform, keywords]) => {
+    console.log('Creating Subscription Config for platform:', JSON.stringify(platform), keywords);
     const socialPlatform = SOCIAL_PLATFORMS[platform];
     await Bluebird.map(keywords, async keyword => {
       const watchConfig = await ensureWatchConfigExist(socialPlatform, keyword);
@@ -120,10 +121,10 @@ export const getSubscriptionDataByUsername = async (username: string) => {
     .map(({keyword, social_platform_id}) => ({keyword, social_platform_id}))
     .reduce((acc, {keyword, social_platform_id}) => {
       const platform = SOCIAL_PLATFORMS_BY_ID[social_platform_id];
-      if (!acc[platform.key]) {
-        acc[platform.key] = [];
+      if (!acc[platform.name]) {
+        acc[platform.name] = [];
       }
-      acc[platform.key].push(keyword);
+      acc[platform.name].push(keyword);
       return acc;
     }, {});
   console.log('Getting Subscription Data for user:', username, '...Done');

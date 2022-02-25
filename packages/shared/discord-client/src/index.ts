@@ -13,8 +13,9 @@ export interface EventPayload {
 class SocialSnitchDiscordClient extends _Eris.Client {
   constructor(token: string) {
     super(token);
-    this.on('interactionCreate', interaction => {
+    this.on('interactionCreate', async interaction => {
       if (interaction instanceof _Eris.CommandInteraction) {
+        await interaction.defer();
         const {
           channel: {id: channel_id},
           data: {options: optionsArray},
@@ -42,7 +43,7 @@ class SocialSnitchDiscordClient extends _Eris.Client {
         name: 'platform',
         type: Constants.ApplicationCommandOptionTypes.STRING,
         required: true,
-        choices: [{name: 'HackerNews', value: SOCIAL_PLATFORMS.HACKER_NEWS.toString()}],
+        choices: [{name: 'HackerNews', value: SOCIAL_PLATFORMS.HACKER_NEWS.key}],
         description: 'Social media platform to keep tab of',
       },
       {

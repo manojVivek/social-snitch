@@ -37,7 +37,7 @@ try {
     } catch (err) {
       console.log('Error while subscribing', channel_id, options.keywords, err);
     }
-    return interaction.createMessage(
+    await interaction.createMessage(
       success ? 'Subscription successful ✅' : 'Request failed ❌. Please try again.'
     );
   });
@@ -50,22 +50,28 @@ try {
     } catch (err) {
       console.log('Error while unsubscribing', channel_id, options.keywords, err);
     }
-    return interaction.createMessage(
+    await interaction.createMessage(
       success ? 'Unsubscribe successful ✅' : 'Request failed ❌. Please try again.'
     );
   });
 
   bot.on('list-subscriptions', async ({channel_id, interaction}) => {
-    const data = await getSubscriptionDataByUsername(`discord:${channel_id}`);
-    if (!data || data?.keyword?.length === 0) {
-      return interaction.createMessage('No active subscriptions found for this channel.');
+    try {
+      const data = await getSubscriptionDataByUsername(`discord:${channel_id}`);
+      if (!data || data?.keyword?.length === 0) {
+        return interaction.createMessage('No active subscriptions found for this channel.');
+      }
+      console.log('data', data);
+      const platformWiseKeywordsString = Object.keys(data)
+        .map((platform, idx) => `${idx + 1}. ${platform}: \`${data[platform].join('|')}\``)
+        .join('\n');
+      const replyMessage = `Active keyword subscriptions:\n${platformWiseKeywordsString}`;
+      await interaction.createMessage(replyMessage);
+    } catch (err) {
+      console.log('Error while listing subscriptions', channel_id, err);
+      return;
     }
-    const platformWiseKeywordsString = Object.keys(data.keyword)
-      .map((platform, idx) => `${idx + 1}. ${platform}: ${data.keyword[platform].join('|')}`)
-      .join('\n');
-    return interaction.createMessage(
-      `Active keyword subscriptions:\n${platformWiseKeywordsString}`
-    );
+    await interaction.createMessage('Request failed ❌. Please try again.');
   });
 
   console.log('Connecting...');
