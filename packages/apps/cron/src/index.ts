@@ -13,22 +13,24 @@ const searchers = {
 async function main() {
   const watchConfigs = await getAllWatchConfigs();
   for (const watchConfig of watchConfigs) {
-    console.log(watchConfig);
+    console.log('Getting updates for', `'${watchConfig.keyword}'`);
     const {id, keyword, social_platform_id, last_run_at} = watchConfig;
     const after = Math.floor(new Date(last_run_at).getTime() / 1000);
     const currentTime = new Date().toISOString();
     const results = await searchers[social_platform_id](keyword, after);
-    console.log(results.length);
     if (results.length === 0) {
+      console.log('No new updates for', `'${watchConfig.keyword}'`);
       await updateWatchConfig(id, {last_run_at: currentTime});
       continue;
     }
+    console.log('Found', results.length, 'new updates for', `'${watchConfig.keyword}'`);
     const subscriptionConfigs = await getSubscriptionConfigsForWatchConfigId(id);
     for (const subscriptionConfig of subscriptionConfigs) {
       const {notification_config_id} = subscriptionConfig;
       await bluebird.map(results, result => createNotification(notification_config_id, result));
     }
     await updateWatchConfig(id, {last_run_at: currentTime});
+    console.log('Getting updates for', `'${watchConfig.keyword}'`, '...Done');
   }
 }
 

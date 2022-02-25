@@ -33,7 +33,7 @@ export const createSubscription = async (
   const notificationConfig = await ensureNotificationConfigExists(
     user_id,
     NOTIFICATION_PLATFORMS.DISCORD.id,
-    nofiticationConfig
+    nofiticationConfig.channelId
   );
   let subscription = await client.getEntity<definitions['subscription']>('subscription', {
     user_id,

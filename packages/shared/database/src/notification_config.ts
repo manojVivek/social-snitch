@@ -11,13 +11,13 @@ const postProcessNotificationConfig = notification => {
 export const ensureNotificationConfigExists = async (
   user_id: number,
   notification_platform_id: number,
-  config: any
+  discord_channel_id: string
 ) => {
   return postProcessNotificationConfig(
     await client.ensureEntityExists<definitions['notification_config']>('notification_config', {
       user_id,
       notification_platform_id,
-      config: JSON.stringify(config),
+      discord_channel_id,
     })
   );
 };
@@ -25,13 +25,13 @@ export const ensureNotificationConfigExists = async (
 export const createNotificationConfig = async (
   user_id: number,
   notification_platform_id: number,
-  config: any
+  discord_channel_id: string
 ) => {
   return postProcessNotificationConfig(
     await client.insertEntity<definitions['notification_config']>('notification_config', {
       user_id,
       notification_platform_id,
-      config: JSON.stringify(config),
+      discord_channel_id,
     })
   );
 };

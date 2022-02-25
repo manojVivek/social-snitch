@@ -69,9 +69,8 @@ try {
       await interaction.createMessage(replyMessage);
     } catch (err) {
       console.log('Error while listing subscriptions', channel_id, err);
-      return;
+      await interaction.createMessage('Request failed ❌. Please try again.');
     }
-    await interaction.createMessage('Request failed ❌. Please try again.');
   });
 
   console.log('Connecting...');

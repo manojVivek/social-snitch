@@ -123,7 +123,7 @@ export interface paths {
           updated_at?: parameters["rowFilter.notification_config.updated_at"];
           user_id?: parameters["rowFilter.notification_config.user_id"];
           notification_platform_id?: parameters["rowFilter.notification_config.notification_platform_id"];
-          config?: parameters["rowFilter.notification_config.config"];
+          discord_channel_id?: parameters["rowFilter.notification_config.discord_channel_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -179,7 +179,7 @@ export interface paths {
           updated_at?: parameters["rowFilter.notification_config.updated_at"];
           user_id?: parameters["rowFilter.notification_config.user_id"];
           notification_platform_id?: parameters["rowFilter.notification_config.notification_platform_id"];
-          config?: parameters["rowFilter.notification_config.config"];
+          discord_channel_id?: parameters["rowFilter.notification_config.discord_channel_id"];
         };
         header: {
           /** Preference */
@@ -199,7 +199,7 @@ export interface paths {
           updated_at?: parameters["rowFilter.notification_config.updated_at"];
           user_id?: parameters["rowFilter.notification_config.user_id"];
           notification_platform_id?: parameters["rowFilter.notification_config.notification_platform_id"];
-          config?: parameters["rowFilter.notification_config.config"];
+          discord_channel_id?: parameters["rowFilter.notification_config.discord_channel_id"];
         };
         body: {
           /** notification_config */
@@ -869,8 +869,8 @@ export interface definitions {
      * This is a Foreign Key to `notification_platform.id`.<fk table='notification_platform' column='id'/>
      */
     notification_platform_id?: number;
-    /** Format: jsonb */
-    config?: string;
+    /** Format: character varying */
+    discord_channel_id?: string;
   };
   notification_platform: {
     /**
@@ -1091,8 +1091,8 @@ export interface parameters {
   "rowFilter.notification_config.user_id": string;
   /** Format: bigint */
   "rowFilter.notification_config.notification_platform_id": string;
-  /** Format: jsonb */
-  "rowFilter.notification_config.config": string;
+  /** Format: character varying */
+  "rowFilter.notification_config.discord_channel_id": string;
   /** @description notification_platform */
   "body.notification_platform": definitions["notification_platform"];
   /** Format: bigint */
