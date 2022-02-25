@@ -44,7 +44,7 @@ export const deleteSubscriptionConfig = async (id: number) => {
   );
   await Bluebird.map(deletedItems, async subscriptionConfig => {
     const {watch_config_id} = subscriptionConfig;
-    const subscriptionConfigs = await getSubscriptionConfigsForWatchConfigId(watch_config_id);
+    const subscriptionConfigs = await getSubscriptionConfigsForWatchConfigId(watch_config_id); 
     if (subscriptionConfigs.length > 0) {
       return;
     }

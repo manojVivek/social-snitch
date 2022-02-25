@@ -6,12 +6,7 @@ import {
   getWatchConfigBySocialPlatformAndKeyword,
   getWatchConfigsByIds,
 } from './watch_config';
-import {
-  ISocialPlatform,
-  NOTIFICATION_PLATFORMS,
-  SOCIAL_PLATFORMS,
-  SOCIAL_PLATFORMS_BY_ID,
-} from './constants';
+import {NOTIFICATION_PLATFORMS, SOCIAL_PLATFORMS, SOCIAL_PLATFORMS_BY_ID} from './constants';
 import {
   deleteSubscriptionConfig,
   ensureSubscriptionConfigExists,
@@ -30,20 +25,16 @@ export const createSubscription = async (
   subscriptions: ICreateSubscriptionOptionsSubscriptions,
   nofiticationConfig: ICreateSubscriptionOptionsNotificationConfig
 ) => {
-  console.log('Ensuring user exists');
+  console.log('Creating Subscription for user:', username);
   const user = await ensureUserExists(username);
   console.log('Ensuring user exists ...Done');
   const user_id = user.id;
 
-  console.log('Ensuring notification config exists');
   const notificationConfig = await ensureNotificationConfigExists(
     user_id,
     NOTIFICATION_PLATFORMS.DISCORD.id,
     nofiticationConfig
   );
-  console.log('Ensuring notification config exists ...Done');
-
-  console.log('Creating subscription', user_id, subscriptions);
   let subscription = await client.getEntity<definitions['subscription']>('subscription', {
     user_id,
   });
@@ -54,22 +45,21 @@ export const createSubscription = async (
     });
     console.log('Creating Subscription ...Done');
   }
-  console.log('Subscription', subscription);
   await Bluebird.map(Object.entries(subscriptions), async ([platform, keywords]) => {
     const socialPlatform = SOCIAL_PLATFORMS[platform];
-    const subscriptionConfigs = await Bluebird.map(keywords, async keyword => {
+    await Bluebird.map(keywords, async keyword => {
       const watchConfig = await ensureWatchConfigExist(socialPlatform, keyword);
       return ensureSubscriptionConfigExists(subscription.id, watchConfig.id, notificationConfig.id);
     });
-
-    console.log('subscriptionConfigs', subscriptionConfigs);
   });
+  console.log('Creating Subscription for user:', username, '...Done');
 };
 
 export const removeSubscription = async (
   username: string,
   subscriptions: ICreateSubscriptionOptionsSubscriptions
 ) => {
+  console.log('Removing Subscription for user:', username);
   const subscriptionConfigs = await getAllSubscriptionConfigsByUsername(username);
   const watchConfigCriterias = Object.keys(subscriptions)
     .map(platform => {
@@ -77,16 +67,30 @@ export const removeSubscription = async (
       return keywords.map(keyword => ({keyword, platform: SOCIAL_PLATFORMS[platform]}));
     })
     .reduce((acc, curr) => acc.concat(curr), []);
-  const watchConfigs = await Bluebird.map(watchConfigCriterias, async ({platform, keyword}) => {
-    return getWatchConfigBySocialPlatformAndKeyword(platform, keyword);
-  });
+  const watchConfigs = (
+    await Bluebird.map(watchConfigCriterias, async ({platform, keyword}) => {
+      return getWatchConfigBySocialPlatformAndKeyword(platform, keyword);
+    })
+  ).filter(Boolean);
   const watchConfigIds = watchConfigs.map(watchConfig => watchConfig.id);
   const subscriptionConfigsToDelete = subscriptionConfigs.filter(subscriptionConfig => {
     return watchConfigIds.includes(subscriptionConfig.watch_config_id);
   });
   await Bluebird.map(subscriptionConfigsToDelete, async subscriptionConfig => {
-    deleteSubscriptionConfig(subscriptionConfig.id);
+    return deleteSubscriptionConfig(subscriptionConfig.id);
   });
+  await reapSubscriptionIfNeeded(subscriptionConfigs[0].subscription_id);
+  console.log('Removing Subscription for user:', username, '...Done');
+};
+
+const reapSubscriptionIfNeeded = async (subscription_id: number) => {
+  const remainingSubscriptionConfigsForSubscription = await getSubscriptionConfigsForSubscriptionId(
+    subscription_id
+  );
+  if (remainingSubscriptionConfigsForSubscription.length > 0) {
+    return;
+  }
+  await deleteSubscriptionEntityById(subscription_id);
 };
 
 const getAllSubscriptionConfigsByUsername = async (username: string) => {
@@ -99,7 +103,7 @@ const getAllSubscriptionConfigsByUsername = async (username: string) => {
 };
 
 const getSubscription = async (query: Partial<definitions['subscription']>) => {
-  return client.getEntity<definitions['subscription']>('ussubscriptioner', query);
+  return client.getEntity<definitions['subscription']>('subscription', query);
 };
 
 export const getSubscriptionByUserId = async (user_id: number) => {
@@ -107,6 +111,7 @@ export const getSubscriptionByUserId = async (user_id: number) => {
 };
 
 export const getSubscriptionDataByUsername = async (username: string) => {
+  console.log('Getting Subscription Data for user:', username);
   const subscriptionConfigs = await getAllSubscriptionConfigsByUsername(username);
   const watchConfigs = await getWatchConfigsByIds(
     subscriptionConfigs.map(subscriptionConfig => subscriptionConfig.watch_config_id)
@@ -121,6 +126,10 @@ export const getSubscriptionDataByUsername = async (username: string) => {
       acc[platform.key].push(keyword);
       return acc;
     }, {});
+  console.log('Getting Subscription Data for user:', username, '...Done');
   return subscriptionData;
 };
-  
+
+const deleteSubscriptionEntityById = async (id: number) => {
+  return client.deleteEntities<definitions['subscription']>('subscription', {id});
+};

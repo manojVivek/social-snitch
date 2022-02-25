@@ -1,9 +1,8 @@
 import {
-  getNewNotificationsGroupedBySubscriptionConfig,
+  getNewNotificationsGroupedByNotificationConfig,
   markNotificationsAsTransmitted,
 } from '@socialsnitch/database/src/notification';
 import {getNotificationConfigById} from '@socialsnitch/database/src/notification_config';
-import {getSubscriptionConfigById} from '@socialsnitch/database/src/subscription_config';
 import SocialSnitchDiscordClient from '@socialsnitch/discord-client';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -11,14 +10,12 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 export const startMessageTransmitter = async (client: SocialSnitchDiscordClient) => {
   for (;;) {
     try {
-      const grouppedMessages = await getNewNotificationsGroupedBySubscriptionConfig();
+      const grouppedMessages = await getNewNotificationsGroupedByNotificationConfig();
       if (!grouppedMessages.length) {
         await sleep(60000);
         continue;
       }
-      for (const {subscription_config_id, notifications} of grouppedMessages) {
-        const subscriptionConfig = await getSubscriptionConfigById(subscription_config_id);
-        const {notification_config_id} = subscriptionConfig;
+      for (const {notification_config_id, notifications} of grouppedMessages) {
         const notificationConfig = await getNotificationConfigById(notification_config_id);
         const message = `New HackerNews mentions:\n${notifications
           .map(({content}, idx) => `${idx + 1}. ${content}`)

@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import DiscordClient, {EventPayload} from '@socialsnitch/discord-client';
-import {startMessageTransmitter} from './message-transmitter-new';
+import {startMessageTransmitter} from './message-transmitter';
 import {
   createSubscription,
   getSubscriptionDataByUsername,

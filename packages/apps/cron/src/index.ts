@@ -25,8 +25,8 @@ async function main() {
     }
     const subscriptionConfigs = await getSubscriptionConfigsForWatchConfigId(id);
     for (const subscriptionConfig of subscriptionConfigs) {
-      const {id} = subscriptionConfig;
-      await bluebird.map(results, result => createNotification(id, result));
+      const {notification_config_id} = subscriptionConfig;
+      await bluebird.map(results, result => createNotification(notification_config_id, result));
     }
     await updateWatchConfig(id, {last_run_at: currentTime});
   }

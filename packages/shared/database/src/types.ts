@@ -19,9 +19,9 @@ export interface paths {
           id?: parameters["rowFilter.notification.id"];
           created_at?: parameters["rowFilter.notification.created_at"];
           updated_at?: parameters["rowFilter.notification.updated_at"];
-          subscription_config_id?: parameters["rowFilter.notification.subscription_config_id"];
           content?: parameters["rowFilter.notification.content"];
           status?: parameters["rowFilter.notification.status"];
+          notification_config_id?: parameters["rowFilter.notification.notification_config_id"];
           /** Filtering Columns */
           select?: parameters["select"];
           /** Ordering */
@@ -75,9 +75,9 @@ export interface paths {
           id?: parameters["rowFilter.notification.id"];
           created_at?: parameters["rowFilter.notification.created_at"];
           updated_at?: parameters["rowFilter.notification.updated_at"];
-          subscription_config_id?: parameters["rowFilter.notification.subscription_config_id"];
           content?: parameters["rowFilter.notification.content"];
           status?: parameters["rowFilter.notification.status"];
+          notification_config_id?: parameters["rowFilter.notification.notification_config_id"];
         };
         header: {
           /** Preference */
@@ -95,9 +95,9 @@ export interface paths {
           id?: parameters["rowFilter.notification.id"];
           created_at?: parameters["rowFilter.notification.created_at"];
           updated_at?: parameters["rowFilter.notification.updated_at"];
-          subscription_config_id?: parameters["rowFilter.notification.subscription_config_id"];
           content?: parameters["rowFilter.notification.content"];
           status?: parameters["rowFilter.notification.status"];
+          notification_config_id?: parameters["rowFilter.notification.notification_config_id"];
         };
         body: {
           /** notification */
@@ -828,16 +828,16 @@ export interface definitions {
      * @default now()
      */
     updated_at?: string;
-    /**
-     * Format: bigint
-     * @description Note:
-     * This is a Foreign Key to `subscription_config.id`.<fk table='subscription_config' column='id'/>
-     */
-    subscription_config_id?: number;
     /** Format: character varying */
     content?: string;
     /** Format: character varying */
     status?: string;
+    /**
+     * Format: bigint
+     * @description Note:
+     * This is a Foreign Key to `notification_config.id`.<fk table='notification_config' column='id'/>
+     */
+    notification_config_id?: number;
   };
   /** @description Details of various notification for a user */
   notification_config: {
@@ -1073,12 +1073,12 @@ export interface parameters {
   "rowFilter.notification.created_at": string;
   /** Format: timestamp with time zone */
   "rowFilter.notification.updated_at": string;
-  /** Format: bigint */
-  "rowFilter.notification.subscription_config_id": string;
   /** Format: character varying */
   "rowFilter.notification.content": string;
   /** Format: character varying */
   "rowFilter.notification.status": string;
+  /** Format: bigint */
+  "rowFilter.notification.notification_config_id": string;
   /** @description notification_config */
   "body.notification_config": definitions["notification_config"];
   /** Format: bigint */
