@@ -28,7 +28,13 @@ export const getNewNotificationsGroupedByNotificationConfig = async () => {
         notifications: [],
       };
     }
-    acc[notification.notification_config_id].notifications.push(notification);
+    if (
+      !acc[notification.notification_config_id].notifications.find(
+        n => n.content === notification.content
+      )
+    ) {
+      acc[notification.notification_config_id].notifications.push(notification);
+    }
     return acc;
   }, {});
   return Object.values(groupedNotifications);
