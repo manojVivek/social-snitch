@@ -54,3 +54,5 @@ export const getWatchConfigsByIds = async (ids: number[]) => {
   }
   return data;
 };
+
+export type IWatchConfig = definitions['watch_config'];

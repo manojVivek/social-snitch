@@ -15,11 +15,6 @@ export const SOCIAL_PLATFORMS: {[key: string]: ISocialPlatform} = {
     name: 'HackerNews',
     key: 'HACKER_NEWS',
   },
-  REDDIT: {
-    id: 2,
-    name: 'Reddit',
-    key: 'REDDIT',
-  },
 };
 
 export const SOCIAL_PLATFORMS_BY_ID: {[key: number]: ISocialPlatform} = Object.keys(
