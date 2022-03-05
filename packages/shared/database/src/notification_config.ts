@@ -1,6 +1,8 @@
 import client from './client';
 import {definitions} from './types';
 
+export type INotificationConfig = definitions['notification_config'];
+
 const postProcessNotificationConfig = notification => {
   if (typeof notification.config === 'string') {
     notification.config = JSON.parse(notification.config);

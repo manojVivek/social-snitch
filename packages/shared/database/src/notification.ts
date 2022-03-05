@@ -2,6 +2,8 @@ import client from './client';
 import {NOTIFICATION_STATUS} from './constants';
 import {definitions} from './types';
 
+export type INotification = definitions['notification'];
+
 export const createNotification = async (notification_config_id: number, content: string) => {
   return client.insertEntity<definitions['notification']>('notification', {
     notification_config_id: notification_config_id,
