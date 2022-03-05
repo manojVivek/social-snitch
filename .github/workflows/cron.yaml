@@ -1,4 +1,4 @@
-name: HNCron
+name: Cron
 
 on:
   schedule:
@@ -8,12 +8,17 @@ on:
 
 jobs:
   discover-hn-mentions:
-    name: Discover-HN-Mentions
+    name: Discover-Social-Mentions
     runs-on: ubuntu-latest
     env:
       DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
       SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+      REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+      REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
+      REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+      REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
