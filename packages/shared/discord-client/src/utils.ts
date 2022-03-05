@@ -21,14 +21,16 @@ export const parseOptions = (optionsArray: any[]): OptionsObject => {
 };
 
 export const sanitizeKeywords = (keywords: string[]): string[] => {
-  return keywords.map(keyword => {
-    let newKeyword = keyword.trim().toLowerCase();
-    if (newKeyword.startsWith(`'`) || newKeyword.startsWith(`"`)) {
-      newKeyword = newKeyword.slice(1);
-    }
-    if (newKeyword.endsWith(`'`) || newKeyword.endsWith(`"`)) {
-      newKeyword = newKeyword.slice(0, -1);
-    }
-    return newKeyword;
-  });
+  return keywords.map(sanitizeKeyword);
+};
+
+export const sanitizeKeyword = (keyword: string): string => {
+  let newKeyword = keyword.trim().toLowerCase();
+  if (newKeyword.startsWith(`'`) || newKeyword.startsWith(`"`)) {
+    newKeyword = newKeyword.slice(1);
+  }
+  if (newKeyword.endsWith(`'`) || newKeyword.endsWith(`"`)) {
+    newKeyword = newKeyword.slice(0, -1);
+  }
+  return newKeyword;
 };
