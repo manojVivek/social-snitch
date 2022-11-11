@@ -18,5 +18,8 @@
   "workspaces": [
     "packages/apps/*",
     "packages/shared/*"
-  ]
+  ],
+  "dependencies": {
+    "twitter-api-sdk": "^1.2.1"
+  }
 }
