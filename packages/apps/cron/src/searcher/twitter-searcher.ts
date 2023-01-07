@@ -17,7 +17,13 @@ class TwitterSearcher implements ISearcher {
       expansions: ['author_id'],
     });
 
-    return results.data.map(item => `https://twitter.com/${item.author_id}/status/${item.id}`);
+    if (results.errors) {
+      throw new Error(results.errors[0].detail);
+    }
+
+    return (
+      results.data?.map(item => `https://twitter.com/${item.author_id}/status/${item.id}`) ?? []
+    );
   }
 }
 
