@@ -5,7 +5,7 @@ class TwitterSearcher implements ISearcher {
   t: Client;
 
   constructor() {
-    this.t = new Client(process.env.BEARER_TOKEN);
+    this.t = new Client(process.env.TWITTER_BEARER_TOKEN);
   }
 
   async search(keyword: string, after: number): Promise<string[]> {
@@ -14,6 +14,7 @@ class TwitterSearcher implements ISearcher {
     const results = await this.t.tweets.tweetsRecentSearch({
       query: `${keyword} -is:retweet`,
       start_time: afterIso,
+      expansions: ['author_id'],
     });
 
     return results.data.map(item => `https://twitter.com/${item.author_id}/status/${item.id}`);
