@@ -13,8 +13,14 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 const DEFAULT_BATCH_LENGTH = 25;
 const DISCORD_MESSAGE_LENGTH_LIMIT = 2000;
+let started = false;
 
 export const startMessageTransmitter = async (client: SocialSnitchDiscordClient) => {
+  if (started) {
+    return;
+  }
+  started = true;
+
   for (;;) {
     try {
       const grouppedMessages = await getNewNotificationsGroupedByNotificationConfig();
@@ -23,6 +29,9 @@ export const startMessageTransmitter = async (client: SocialSnitchDiscordClient)
         await sleep(60000);
         continue;
       }
+
+      console.log('Processing notifications...');
+      console.log('grouppedMessages', grouppedMessages);
 
       for (const {notification_config_id, notifications} of grouppedMessages) {
         console.log(`Processing ${notifications.length} notifications`);
