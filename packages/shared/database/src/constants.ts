@@ -20,6 +20,11 @@ export const SOCIAL_PLATFORMS: {[key: string]: ISocialPlatform} = {
     name: 'Reddit',
     key: 'REDDIT',
   },
+  TWITTER: {
+    id: 3,
+    name: 'Twitter',
+    key: 'TWITTER',
+  }
 };
 
 export const SOCIAL_PLATFORMS_BY_ID: {[key: number]: ISocialPlatform} = Object.keys(
