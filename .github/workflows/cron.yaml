@@ -19,6 +19,7 @@ jobs:
       REDDIT_USER_AGENT: ${{ secrets.REDDIT_USER_AGENT }}
       REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
       REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+      TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
