@@ -34,24 +34,32 @@ export const startMessageTransmitter = async (client: SocialSnitchDiscordClient)
       console.log('grouppedMessages', grouppedMessages);
 
       for (const {notification_config_id, notifications} of grouppedMessages) {
-        console.log(`Processing ${notifications.length} notifications`);
-        const notificationConfig = await getNotificationConfigById(notification_config_id);
-        let currentBatch = [];
-        let batchLength = DEFAULT_BATCH_LENGTH;
-        for (const notification of notifications) {
-          if (notification.content.length + batchLength > DISCORD_MESSAGE_LENGTH_LIMIT) {
-            await transmitNotifications(currentBatch, client, notificationConfig);
-            currentBatch = [];
-            batchLength = DEFAULT_BATCH_LENGTH;
+        try {
+          console.log(`Processing ${notifications.length} notifications`);
+          const notificationConfig = await getNotificationConfigById(notification_config_id);
+          let currentBatch = [];
+          let batchLength = DEFAULT_BATCH_LENGTH;
+          for (const notification of notifications) {
+            if (notification.content.length + batchLength > DISCORD_MESSAGE_LENGTH_LIMIT) {
+              await transmitNotifications(currentBatch, client, notificationConfig);
+              currentBatch = [];
+              batchLength = DEFAULT_BATCH_LENGTH;
+            }
+            currentBatch.push(notification);
+            batchLength += notification.content.length + 5;
           }
-          currentBatch.push(notification);
-          batchLength += notification.content.length + 5;
-        }
-        if (currentBatch.length) {
-          await transmitNotifications(currentBatch, client, notificationConfig);
-        }
+          if (currentBatch.length) {
+            await transmitNotifications(currentBatch, client, notificationConfig);
+          }
 
-        console.log(`Processing ${notifications.length} notifications ...Done`);
+          console.log(`Processing ${notifications.length} notifications ...Done`);
+        } catch (err) {
+          console.error(
+            'Error while processing notifications for notification_config_id',
+            notification_config_id,
+            err
+          );
+        }
       }
     } catch (err) {
       console.error('Error while transmitting message', err);
