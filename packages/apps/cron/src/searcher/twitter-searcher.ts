@@ -9,6 +9,8 @@ class TwitterSearcher implements ISearcher {
   }
 
   async search(keyword: string, after: number): Promise<string[]> {
+    // Temporarily return [] as the search api is not available for free plan
+    return [];
     const afterIso = new Date(after).toISOString();
 
     const results = await this.t.tweets.tweetsRecentSearch({
