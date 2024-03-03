@@ -7,6 +7,12 @@ import {
   removeSubscription,
 } from '@socialsnitch/database/src/subscription';
 
+setTimeout(() => {
+  // stop the process after an hour
+  process.exit(0);
+}, 60 * 1000);
+
+
 try {
   console.log('Starting...');
   const bot = new DiscordClient(process.env.DISCORD_BOT_TOKEN);
