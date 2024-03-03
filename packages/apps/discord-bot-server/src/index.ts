@@ -8,9 +8,9 @@ import {
 } from '@socialsnitch/database/src/subscription';
 
 setTimeout(() => {
-  // stop the process after an hour
+  // stop the process after 10 minutes
   process.exit(0);
-}, 60 * 1000);
+}, 10 * 60 * 1000);
 
 
 try {
