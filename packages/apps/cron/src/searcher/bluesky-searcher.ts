@@ -26,9 +26,9 @@ class BlueskySearcher implements ISearcher {
     return (
       results.data?.posts.map(item => {
         const at = new AtUri(item.uri);
-        const profileId = at.host.replace('did:plc:', '')
-        const postId = at.pathname.split('/')[2]
-        return `https://bsky.app/${profileId}/status/${postId}`
+        const profileId = at.host;
+        const postId = at.pathname.split('/')[2];
+        return `https://bsky.app/profile/${profileId}/post/${postId}`;
       }) ?? []
     );
   }
