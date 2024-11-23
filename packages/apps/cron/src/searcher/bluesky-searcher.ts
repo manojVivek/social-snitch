@@ -1,6 +1,6 @@
 import {ISearcher} from '.';
 import { AtpAgent } from '@atproto/api'
-import {AtUri, NSID} from '@atproto/syntax'
+import {AtUri} from '@atproto/syntax'
 
 
 class BlueskySearcher implements ISearcher {
