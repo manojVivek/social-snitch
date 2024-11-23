@@ -24,6 +24,11 @@ export const SOCIAL_PLATFORMS: {[key: string]: ISocialPlatform} = {
     id: 3,
     name: 'Twitter',
     key: 'TWITTER',
+  },
+  BLUESKY: {
+    id: 4,
+    name: 'Bluesky',
+    key: 'BLUESKY',
   }
 };
 

@@ -3,6 +3,7 @@ import {IWatchConfig} from '@socialsnitch/database/src/watch_config';
 import HackerNewsSearcher from './hn-searcher';
 import RedditSearcher from './reddit-searcher';
 import TwitterSearcher from './twitter-searcher';
+import BlueskySearcher from './bluesky-searcher';
 
 export interface ISearcher {
   search(keyword: string, after: number): Promise<string[]>;
@@ -12,6 +13,7 @@ const searchers: {[key: number]: ISearcher} = {
   [SOCIAL_PLATFORMS.HACKER_NEWS.id]: new HackerNewsSearcher(),
   [SOCIAL_PLATFORMS.REDDIT.id]: new RedditSearcher(),
   [SOCIAL_PLATFORMS.TWITTER.id]: new TwitterSearcher(),
+  [SOCIAL_PLATFORMS.BLUESKY.id]: new BlueskySearcher(),
 };
 
 const searchForUpdates = async (watchConfig: IWatchConfig) => {
