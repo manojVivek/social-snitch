@@ -19,13 +19,13 @@ jobs:
       - name: Checkout the code
         uses: actions/checkout@v2
 
-      - name: Install Node v16
-        uses: actions/setup-node@v2.5.1
+      - name: Install Node v20
+        uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '20'
 
       - name: Housekeeping
-        run: yarn && yarn bootstrap
+        run: yarn
 
       - name: Run the script
         run: yarn lerna run --stream --scope @socialsnitch/discord-bot-server prod
