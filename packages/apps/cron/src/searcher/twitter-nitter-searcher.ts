@@ -44,6 +44,10 @@ class TwitterNitterSearcher implements ISearcher {
     return null;
   }
 
+  private async delay(ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
   async search(keyword: string, after: number): Promise<string[]> {
     const afterDate = new Date(after);
     const sinceParam = afterDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
@@ -56,6 +60,11 @@ class TwitterNitterSearcher implements ISearcher {
       const maxPages = 10; // Limit to prevent infinite loops
 
       while (searchUrl && pageCount < maxPages) {
+        // Add delay between requests to avoid rate limiting (except for first page)
+        if (pageCount > 0) {
+          await this.delay(1000); // 1 second delay between pagination requests
+        }
+
         const response = await fetch(searchUrl);
 
         if (!response.ok) {

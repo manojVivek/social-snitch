@@ -10,6 +10,13 @@ describe('TwitterNitterSearcher', () => {
   beforeEach(() => {
     searcher = new TwitterNitterSearcher();
     mockFetch.mockReset();
+    // Mock timers for delay testing
+    jest.useFakeTimers();
+  });
+
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
   });
 
   describe('search', () => {
@@ -214,7 +221,15 @@ describe('TwitterNitterSearcher', () => {
           text: async () => secondPageHtml
         });
 
-      const results = await searcher.search('pagination', afterTimestamp);
+      const searchPromise = searcher.search('pagination', afterTimestamp);
+      
+      // No delay for first page
+      await jest.advanceTimersByTimeAsync(0);
+      
+      // Advance timer for delay between pages
+      await jest.advanceTimersByTimeAsync(1000);
+      
+      const results = await searchPromise;
       
       expect(results).toEqual([
         'https://twitter.com/user1/status/1234567890123456789',
@@ -248,6 +263,50 @@ describe('TwitterNitterSearcher', () => {
         'https://twitter.com/user2/status/1234567890123456790'
       ]);
       expect(mockFetch).toHaveBeenCalledTimes(1);
+    });
+
+    it('should apply delays between multiple pagination requests', async () => {
+      const afterTimestamp = new Date('2020-01-01').getTime();
+      
+      // Three pages to test multiple delays
+      const page1Html = `
+        <a href="/user1/status/1">Tweet 1</a>
+        <div class="show-more"><a href="/search?cursor=page2">Show more</a></div>
+      `;
+      const page2Html = `
+        <a href="/user2/status/2">Tweet 2</a>
+        <div class="show-more"><a href="/search?cursor=page3">Show more</a></div>
+      `;
+      const page3Html = `
+        <a href="/user3/status/3">Tweet 3</a>
+      `;
+      
+      mockFetch.mockClear();
+      mockFetch
+        .mockResolvedValueOnce({ ok: true, status: 200, text: async () => page1Html })
+        .mockResolvedValueOnce({ ok: true, status: 200, text: async () => page2Html })
+        .mockResolvedValueOnce({ ok: true, status: 200, text: async () => page3Html });
+
+      const searchPromise = searcher.search('multipage', afterTimestamp);
+      
+      // No delay for first page
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      
+      // First delay (1000ms)
+      await jest.advanceTimersByTimeAsync(1000);
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      
+      // Second delay (1000ms)
+      await jest.advanceTimersByTimeAsync(1000);
+      expect(mockFetch).toHaveBeenCalledTimes(3);
+      
+      const results = await searchPromise;
+      
+      expect(results).toEqual([
+        'https://twitter.com/user1/status/1',
+        'https://twitter.com/user2/status/2',
+        'https://twitter.com/user3/status/3'
+      ]);
     });
   });
 });
