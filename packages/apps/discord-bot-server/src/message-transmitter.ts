@@ -72,9 +72,27 @@ async function transmitNotifications(
   client: SocialSnitchDiscordClient,
   notificationConfig: INotificationConfig
 ) {
-  const message = `New social mentions:\n${notifications
-    .map(({content}, idx) => `${idx + 1}. ${content}`)
-    .join('\n')}`;
+  // Group notifications by keyword
+  const notificationsByKeyword: { [keyword: string]: INotification[] } = {};
+  notifications.forEach(notification => {
+    const keyword = notification.keyword || 'Unknown';
+    if (!notificationsByKeyword[keyword]) {
+      notificationsByKeyword[keyword] = [];
+    }
+    notificationsByKeyword[keyword].push(notification);
+  });
+
+  // Format message with keywords
+  const messageParts: string[] = [];
+  Object.entries(notificationsByKeyword).forEach(([keyword, keywordNotifications]) => {
+    messageParts.push(`**Keyword: ${keyword}**`);
+    keywordNotifications.forEach((notification, idx) => {
+      messageParts.push(`${idx + 1}. ${notification.content}`);
+    });
+    messageParts.push(''); // Empty line between keywords
+  });
+
+  const message = `New social mentions:\n${messageParts.join('\n')}`.trim();
   await sendNotification(client, notificationConfig, message);
   await markNotificationsAsTransmitted(notifications.map(({id}) => id));
 }
