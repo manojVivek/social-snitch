@@ -1,6 +1,7 @@
 import {ISearcher} from '.';
 import { AtpAgent } from '@atproto/api'
 import {AtUri} from '@atproto/syntax'
+import { withRateLimit } from '../rate-limiter';
 
 
 class BlueskySearcher implements ISearcher {
@@ -32,10 +33,13 @@ class BlueskySearcher implements ISearcher {
     try {
       await this.ensureAuthenticated();
 
-      const results = await this.client.app.bsky.feed.searchPosts({
-        q: keyword,
-        sort: 'latest',
-        since: afterIso,
+      // Wrap the API call with rate limiting
+      const results = await withRateLimit('bsky.social', async () => {
+        return await this.client.app.bsky.feed.searchPosts({
+          q: keyword,
+          sort: 'latest',
+          since: afterIso,
+        });
       });
 
       if (!results.success) {

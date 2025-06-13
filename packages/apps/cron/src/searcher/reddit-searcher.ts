@@ -3,6 +3,7 @@ import snoowrap from 'snoowrap';
 import cld from 'cld';
 import Bluebird from 'bluebird';
 import {sanitizeKeyword} from '@socialsnitch/discord-client/src/utils';
+import { withRateLimit } from '../rate-limiter';
 
 const isEnglishPost = async (text: string) => {
   try {
@@ -33,12 +34,17 @@ class RedditSearcher implements ISearcher {
 
   async search(keyword: string, after: number): Promise<string[]> {
     const afterEpochSecs = Math.floor(after / 1000);
-    const allResults = await this.r.search({
-      query: keyword,
-      sort: 'new',
-      time: 'all',
-      syntax: 'lucene',
+    
+    // Wrap the Reddit API call with rate limiting
+    const allResults = await withRateLimit('oauth.reddit.com', async () => {
+      return await this.r.search({
+        query: keyword,
+        sort: 'new',
+        time: 'all',
+        syntax: 'lucene',
+      });
     });
+    
     const results = await Bluebird.filter(allResults, async result => {
       const sanitizedKeyword = sanitizeKeyword(keyword);
       // Time filter
