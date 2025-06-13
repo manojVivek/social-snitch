@@ -2,11 +2,7 @@ import {ISearcher} from '.';
 import 'isomorphic-fetch';
 
 class TwitterNitterSearcher implements ISearcher {
-  private nitterInstances = [
-    'https://nitter.net',
-    'https://nitter.unixfox.eu',
-    'https://nitter.poast.org',
-  ];
+  private nitterInstance = 'https://nitter.net';
 
   private extractTimestampFromTwitterId(tweetId: string): number {
     // Twitter snowflake ID format: 64-bit integer
@@ -52,86 +48,77 @@ class TwitterNitterSearcher implements ISearcher {
     const afterDate = new Date(after);
     const sinceParam = afterDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
     
-    for (const instance of this.nitterInstances) {
-      try {
-        const searchQuery = `${keyword} since:${sinceParam}`;
-        let searchUrl = `${instance}/search?q=${encodeURIComponent(searchQuery)}&f=tweets`;
-        const allUrls: string[] = [];
-        let pageCount = 0;
-        const maxPages = 3; // Limit to prevent infinite loops
+    try {
+      const searchQuery = `${keyword} since:${sinceParam}`;
+      let searchUrl = `${this.nitterInstance}/search?q=${encodeURIComponent(searchQuery)}&f=tweets`;
+      const allUrls: string[] = [];
+      let pageCount = 0;
+      const maxPages = 3; // Limit to prevent infinite loops
+      
+      while (searchUrl && pageCount < maxPages) {
+        const response = await fetch(searchUrl);
         
-        while (searchUrl && pageCount < maxPages) {
-          const response = await fetch(searchUrl);
-          
-          if (!response.ok) {
-            // If first page fails, try next instance
-            if (pageCount === 0) {
-              break;
-            }
-            // If subsequent page fails, stop pagination but return what we have
-            break;
+        if (!response.ok) {
+          // If first page fails, return empty
+          if (pageCount === 0) {
+            return [];
           }
+          // If subsequent page fails, stop pagination but return what we have
+          break;
+        }
+        
+        const html = await response.text();
+        
+        // Parse tweet URLs from Nitter HTML
+        const tweetUrlRegex = /href="([^"]+\/status\/\d+)"/g;
+        const matches = html.matchAll(tweetUrlRegex);
+        const pageUrls: string[] = [];
+        
+        for (const match of matches) {
+          const nitterUrl = match[1];
+          // Extract tweet ID and username
+          const tweetIdMatch = nitterUrl.match(/status\/(\d+)/);
+          const usernameMatch = nitterUrl.match(/\/([^/]+)\/status/);
           
-          const html = await response.text();
-          
-          // Parse tweet URLs from Nitter HTML
-          const tweetUrlRegex = /href="([^"]+\/status\/\d+)"/g;
-          const matches = html.matchAll(tweetUrlRegex);
-          const pageUrls: string[] = [];
-          
-          for (const match of matches) {
-            const nitterUrl = match[1];
-            // Extract tweet ID and username
-            const tweetIdMatch = nitterUrl.match(/status\/(\d+)/);
-            const usernameMatch = nitterUrl.match(/\/([^/]+)\/status/);
+          if (tweetIdMatch && usernameMatch) {
+            const tweetId = tweetIdMatch[1];
+            const username = usernameMatch[1];
             
-            if (tweetIdMatch && usernameMatch) {
-              const tweetId = tweetIdMatch[1];
-              const username = usernameMatch[1];
-              
-              // Extract timestamp from Twitter snowflake ID for precise filtering
-              const tweetTimestamp = this.extractTimestampFromTwitterId(tweetId);
-              
-              // Only include tweets after the specified time
-              // If timestamp is 0 (invalid/small ID), include it
-              if (tweetTimestamp === 0 || tweetTimestamp >= after) {
-                const tweetUrl = `https://twitter.com/${username}/status/${tweetId}`;
-                if (!allUrls.includes(tweetUrl)) { // Avoid duplicates
-                  pageUrls.push(tweetUrl);
-                }
+            // Extract timestamp from Twitter snowflake ID for precise filtering
+            const tweetTimestamp = this.extractTimestampFromTwitterId(tweetId);
+            
+            // Only include tweets after the specified time
+            // If timestamp is 0 (invalid/small ID), include it
+            if (tweetTimestamp === 0 || tweetTimestamp >= after) {
+              const tweetUrl = `https://twitter.com/${username}/status/${tweetId}`;
+              if (!allUrls.includes(tweetUrl)) { // Avoid duplicates
+                pageUrls.push(tweetUrl);
               }
             }
           }
-          
-          allUrls.push(...pageUrls);
-          
-          // Stop if we have enough results or no tweets found on this page
-          if (allUrls.length >= 20 || pageUrls.length === 0) {
-            break;
-          }
-          
-          // Get next page URL
-          searchUrl = this.extractNextPageUrl(html, instance);
-          pageCount++;
         }
         
-        // Return first 20 results if we found any
-        if (allUrls.length > 0) {
-          return allUrls.slice(0, 20);
+        allUrls.push(...pageUrls);
+        
+        // Stop if we have enough results or no tweets found on this page
+        if (allUrls.length >= 20 || pageUrls.length === 0) {
+          break;
         }
         
-      } catch (error) {
-        if (process.env.NODE_ENV !== 'test') {
-          console.error(`Failed to search using ${instance}:`, error);
-        }
-        continue;
+        // Get next page URL
+        searchUrl = this.extractNextPageUrl(html, this.nitterInstance);
+        pageCount++;
       }
+      
+      // Return first 20 results
+      return allUrls.slice(0, 20);
+      
+    } catch (error) {
+      if (process.env.NODE_ENV !== 'test') {
+        console.error(`Failed to search using ${this.nitterInstance}:`, error);
+      }
+      return [];
     }
-    
-    if (process.env.NODE_ENV !== 'test') {
-      console.error('All Nitter instances failed');
-    }
-    return [];
   }
 }
 

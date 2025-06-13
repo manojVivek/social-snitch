@@ -56,31 +56,14 @@ describe('TwitterNitterSearcher', () => {
       expect(results).toEqual([]);
     });
 
-    it('should try multiple Nitter instances on failure', async () => {
-      // First instance fails
+    it('should handle Nitter instance failure', async () => {
+      // Instance fails
       mockFetch.mockRejectedValueOnce(new Error('Network error'));
 
-      // Second instance succeeds
-      const mockHtml = `<a href="/user/status/123">Tweet</a>`;
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        text: async () => mockHtml
-      });
-
       const results = await searcher.search('test', new Date('2010-01-01').getTime());
 
-      expect(mockFetch).toHaveBeenCalledTimes(2);
-      expect(results).toEqual(['https://twitter.com/user/status/123']);
-    });
-
-    it('should return empty array when all Nitter instances fail', async () => {
-      mockFetch.mockRejectedValue(new Error('All instances down'));
-
-      const results = await searcher.search('test', new Date('2010-01-01').getTime());
-
+      expect(mockFetch).toHaveBeenCalledTimes(1);
       expect(results).toEqual([]);
-      expect(mockFetch).toHaveBeenCalledTimes(3); // Assuming 3 instances
     });
 
     it('should extract correct Twitter URLs from various Nitter URL formats', async () => {
@@ -149,24 +132,16 @@ describe('TwitterNitterSearcher', () => {
     });
 
     it('should handle non-200 responses correctly', async () => {
-      // First instance returns 404
+      // Instance returns 404
       mockFetch.mockResolvedValueOnce({
         ok: false,
         status: 404,
         text: async () => 'Not Found'
       });
 
-      // Second instance returns valid data
-      const mockHtml = `<a href="/user/status/123">Tweet</a>`;
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        status: 200,
-        text: async () => mockHtml
-      });
-
       const results = await searcher.search('test', new Date('2010-01-01').getTime());
 
-      expect(results).toEqual(['https://twitter.com/user/status/123']);
+      expect(results).toEqual([]);
     });
 
     it('should use date filtering with since parameter', async () => {
