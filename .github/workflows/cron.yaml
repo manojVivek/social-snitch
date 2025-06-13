@@ -20,6 +20,8 @@ jobs:
       REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
       REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
       TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
+      BLUESKY_IDENTIFIER: ${{ secrets.BLUESKY_IDENTIFIER }}
+      BLUESKY_PASSWORD: ${{ secrets.BLUESKY_PASSWORD }}
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
