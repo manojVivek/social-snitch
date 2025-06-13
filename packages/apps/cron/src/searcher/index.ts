@@ -2,7 +2,7 @@ import {SOCIAL_PLATFORMS} from '@socialsnitch/database/src/constants';
 import {IWatchConfig} from '@socialsnitch/database/src/watch_config';
 import HackerNewsSearcher from './hn-searcher';
 import RedditSearcher from './reddit-searcher';
-import TwitterSearcher from './twitter-searcher';
+import TwitterNitterSearcher from './twitter-nitter-searcher';
 import BlueskySearcher from './bluesky-searcher';
 
 export interface ISearcher {
@@ -12,7 +12,7 @@ export interface ISearcher {
 const searchers: {[key: number]: ISearcher} = {
   [SOCIAL_PLATFORMS.HACKER_NEWS.id]: new HackerNewsSearcher(),
   [SOCIAL_PLATFORMS.REDDIT.id]: new RedditSearcher(),
-  [SOCIAL_PLATFORMS.TWITTER.id]: new TwitterSearcher(),
+  [SOCIAL_PLATFORMS.TWITTER.id]: new TwitterNitterSearcher(),
   [SOCIAL_PLATFORMS.BLUESKY.id]: new BlueskySearcher(),
 };
 

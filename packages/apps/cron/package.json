@@ -5,7 +5,9 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "ts-node-dev src/index.ts",
-    "prod": "ts-node src/index.ts"
+    "prod": "ts-node src/index.ts",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@atproto/api": "^0.13.18",
@@ -19,5 +21,10 @@
     "twitter-api-sdk": "^1.2.1"
   },
   "license": "MIT",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "jest": "^30.0.0",
+    "ts-jest": "^29.4.0"
+  }
 }
