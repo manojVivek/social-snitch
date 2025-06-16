@@ -4,7 +4,7 @@
   "description": "Package that has common discord bot functionalities.",
   "main": "src/index.ts",
   "dependencies": {
-    "eris": "^0.16.1"
+    "eris": "^0.18.0"
   },
   "license": "MIT"
 }
