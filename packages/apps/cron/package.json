@@ -10,7 +10,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@atproto/api": "^0.13.18",
+    "@atproto/api": "^0.15.27",
     "@atproto/syntax": "^0.3.1",
     "@socialsnitch/database": "0.0.0",
     "bluebird": "^3.7.2",
