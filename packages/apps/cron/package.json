@@ -16,7 +16,7 @@
     "bluebird": "^3.7.2",
     "bottleneck": "^2.19.5",
     "cld": "^2.7.1",
-    "dotenv": "^14.2.0",
+    "dotenv": "^17.2.3",
     "isomorphic-fetch": "^3.0.0",
     "snoowrap": "^1.23.0",
     "twitter-api-sdk": "^1.2.1"
