@@ -34,37 +34,45 @@ class RedditSearcher implements ISearcher {
 
   async search(keyword: string, after: number): Promise<string[]> {
     const afterEpochSecs = Math.floor(after / 1000);
-    
-    // Wrap the Reddit API call with rate limiting
-    const allResults = await withRateLimit('oauth.reddit.com', async () => {
-      return await this.r.search({
-        query: keyword,
-        sort: 'new',
-        time: 'all',
-        syntax: 'lucene',
+
+    // Wrap keywords with spaces in quotes for Lucene phrase search syntax
+    const query = keyword.includes(' ') ? `"${keyword}"` : keyword;
+
+    try {
+      // Wrap the Reddit API call with rate limiting
+      const allResults = await withRateLimit('oauth.reddit.com', async () => {
+        return await this.r.search({
+          query,
+          sort: 'new',
+          time: 'all',
+          syntax: 'lucene',
+        });
       });
-    });
-    
-    const results = await Bluebird.filter(allResults, async result => {
-      const sanitizedKeyword = sanitizeKeyword(keyword);
-      // Time filter
-      if (result.created_utc < afterEpochSecs) {
-        return false;
-      }
 
-      // Exact match filter
-      const textContent = `${result.title} ${result.selftext}`;
-      if (textContent.toLowerCase().indexOf(sanitizedKeyword) === -1) {
-        return false;
-      }
+      const results = await Bluebird.filter(allResults, async result => {
+        const sanitizedKeyword = sanitizeKeyword(keyword);
+        // Time filter
+        if (result.created_utc < afterEpochSecs) {
+          return false;
+        }
 
-      // Language filter
-      if (sanitizedKeyword !== 'parca') {
-        return true;
-      }
-      return isEnglishPost(textContent);
-    });
-    return results.map(({permalink}) => `https://reddit.com${permalink}`);
+        // Exact match filter
+        const textContent = `${result.title} ${result.selftext}`;
+        if (textContent.toLowerCase().indexOf(sanitizedKeyword) === -1) {
+          return false;
+        }
+
+        // Language filter
+        if (sanitizedKeyword !== 'parca') {
+          return true;
+        }
+        return isEnglishPost(textContent);
+      });
+      return results.map(({permalink}) => `https://reddit.com${permalink}`);
+    } catch (error) {
+      console.error(`[Reddit] Error searching for '${keyword}':`, error.message || error);
+      return [];
+    }
   }
 }
 
