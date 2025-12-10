@@ -34,11 +34,14 @@ class RedditSearcher implements ISearcher {
 
   async search(keyword: string, after: number): Promise<string[]> {
     const afterEpochSecs = Math.floor(after / 1000);
-    
+
+    // Wrap keywords with spaces in quotes for Lucene phrase search syntax
+    const query = keyword.includes(' ') ? `"${keyword}"` : keyword;
+
     // Wrap the Reddit API call with rate limiting
     const allResults = await withRateLimit('oauth.reddit.com', async () => {
       return await this.r.search({
-        query: keyword,
+        query,
         sort: 'new',
         time: 'all',
         syntax: 'lucene',
