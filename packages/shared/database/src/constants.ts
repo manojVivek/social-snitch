@@ -50,6 +50,8 @@ export const NOTIFICATION_PLATFORMS: {[key: string]: INotificationPlatform} = {
 export const NOTIFICATION_STATUS = {
   NEW: 'NEW',
   TRANSMITTED: 'TRANSMITTED',
+  FAILED_TO_RETRY: 'FAILED_TO_RETRY',
+  FAILED: 'FAILED',
 };
 
 export type INotificationStatus = typeof NOTIFICATION_STATUS[keyof typeof NOTIFICATION_STATUS];

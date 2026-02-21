@@ -53,3 +53,52 @@ export const markNotificationsAsTransmitted = async (ids: number[]) => {
   }
   return data;
 };
+
+export const markNotificationsAsFailedToRetry = async (ids: number[]) => {
+  const {data, error} = await client
+    .from<definitions['notification']>('notification')
+    .update({status: NOTIFICATION_STATUS.FAILED_TO_RETRY, updated_at: new Date().toISOString()})
+    .in('id', ids)
+    .eq('status', NOTIFICATION_STATUS.NEW);
+  if (error) {
+    throw error;
+  }
+  return data;
+};
+
+export const markNotificationsAsFailed = async (ids: number[]) => {
+  const {data, error} = await client
+    .from<definitions['notification']>('notification')
+    .update({status: NOTIFICATION_STATUS.FAILED, updated_at: new Date().toISOString()})
+    .in('id', ids)
+    .eq('status', NOTIFICATION_STATUS.FAILED_TO_RETRY);
+  if (error) {
+    throw error;
+  }
+  return data;
+};
+
+export const getFailedToRetryNotificationsGroupedByNotificationConfig = async () => {
+  const notifications = await client.getEntities<definitions['notification']>('notification', {
+    status: NOTIFICATION_STATUS.FAILED_TO_RETRY,
+  });
+  const groupedNotifications: {
+    [key: number]: {notification_config_id: number; notifications: definitions['notification'][]};
+  } = notifications.reduce((acc, notification) => {
+    if (!acc[notification.notification_config_id]) {
+      acc[notification.notification_config_id] = {
+        notification_config_id: notification.notification_config_id,
+        notifications: [],
+      };
+    }
+    if (
+      !acc[notification.notification_config_id].notifications.find(
+        n => n.content === notification.content
+      )
+    ) {
+      acc[notification.notification_config_id].notifications.push(notification);
+    }
+    return acc;
+  }, {});
+  return Object.values(groupedNotifications);
+};
